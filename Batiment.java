@@ -4,12 +4,13 @@ public class Batiment {
     protected List<Bavard> listBavards;
     protected Concierge concierge;
 
-
+    // Constructeur
     public Batiment() {
         this.listBavards = new ArrayList<>();
         this.concierge = null;
     }
 
+    // Methodes
     public void setConcierge(Concierge unConcierge) {
         concierge = unConcierge;
     }

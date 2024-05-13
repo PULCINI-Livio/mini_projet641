@@ -23,7 +23,7 @@ public class Bavard implements PapotageListener{
 
     @Override
     public void papotageEventReceived(PapotageEvent event) {
-        System.out.println(nom + " a reçu un message : ");
+        System.out.println(nom + " a reçu un message : " + event.corps);
     }
 
     
