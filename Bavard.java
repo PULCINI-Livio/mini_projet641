@@ -1,3 +1,3 @@
-public class Bavard {
-
+public class Bavard implements PapotageListener{
+    String nom;
 }

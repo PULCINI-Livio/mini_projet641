@@ -1,3 +1,4 @@
-public class Concierge {
+public class Concierge implements PapotageListener{
+    String nom;
 
 }
