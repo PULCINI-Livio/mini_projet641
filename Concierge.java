@@ -5,8 +5,14 @@ public class Concierge implements PapotageListener{
     protected Batiment batiment;
     //protected List<Bavard> listBavards;
 
+    
     public String getNom() {
         return nom;
+    }
+
+    public Concierge(String nom, Batiment batiment) {
+        this.nom = nom;
+        this.batiment = batiment;
     }
 
     public void setNom(String nom) {
