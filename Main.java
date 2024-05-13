@@ -1,13 +1,13 @@
 public class Main {
     public static void main(String[] args)  {
-    //Création du batiment
+    // Création du batiment
     Batiment polytech = new Batiment();
     
-    //Création du concierge
+    // Création du concierge
     Concierge axelle = new Concierge("axelle", polytech);
     polytech.setConcierge(axelle);
 
-    //Création des Bavards
+    // Création des Bavards
     Bavard charlotte = new Bavard("charlotte", polytech);
     polytech.addBavard(charlotte);
     Bavard emma = new Bavard("emma",polytech); 
@@ -21,6 +21,7 @@ public class Main {
     Bavard mathieu = new Bavard("mathieu", polytech, false);
     polytech.addBavard(mathieu);
     //System.out.println(polytech.listBavards);
+
     charlotte.sendPotin("je suis un sujet", "salut la mif");
     }
 

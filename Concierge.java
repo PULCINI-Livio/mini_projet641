@@ -18,14 +18,7 @@ public class Concierge implements PapotageListener{
         this.nom = nom;
     }
 
-    /* 
-    public void sendPotin(String unSujet, String unCorps) {
-        PapotageEvent potin = new PapotageEvent(this, unSujet, unCorps);
-        for (PapotageListener listener : batiment.listBavards) {
-            listener.papotageEventReceived(potin);
-        }
-    }
-    */
+    
     public void transferPotin(PapotageEvent potin) {
         for (Bavard bavard : batiment.listBavards) {
             if (bavard.getInteret() == true) {
