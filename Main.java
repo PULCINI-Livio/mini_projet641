@@ -1,3 +1,21 @@
 public class Main {
+    //Création du batiment
+    Batiment polytech = new Batiment();
+    //Création du concierge
+    Concierge axelle = new Concierge(axelle, polytech);
+    polytech.setConcierge(axelle);
+
+    //Création des Bavards
+    Bavard charlotte = new Bavard(charlotte, polytech);
+    polytech.addBavard(charlotte);
+    Bavard emma = new Bavard(emma, polytech); 
+    polytech.addBavard(emma);
+    Bavard louna = new Bavard(louna, polytech);
+    polytech.addBavard(louna);
+    Bavard cyprien = new Bavard(cyprien, polytech);
+    polytech.addBavard(cyprien);
+    Bavard livio = new Bavard(livio, polytech);
+    polytech.addBavard(livio);
+
 
 }
