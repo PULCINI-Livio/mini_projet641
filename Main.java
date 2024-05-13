@@ -16,12 +16,12 @@ public class Main {
     polytech.addBavard(louna);
     Bavard cyprien = new Bavard("cyprien", polytech);
     polytech.addBavard(cyprien);
-    Bavard livio = new Bavard("livio", polytech);
+    Bavard livio = new Bavard("livio", polytech, false);
     polytech.addBavard(livio);
-    Bavard mathieu = new Bavard("mathieu", polytech);
+    Bavard mathieu = new Bavard("mathieu", polytech, false);
     polytech.addBavard(mathieu);
-    System.out.println(polytech.listBavards);
-
+    //System.out.println(polytech.listBavards);
+    charlotte.sendPotin("je suis un sujet", "salut la mif");
     }
 
 }

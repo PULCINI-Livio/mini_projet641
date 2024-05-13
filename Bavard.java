@@ -1,11 +1,19 @@
 public class Bavard implements PapotageListener{
     protected String nom;
     protected Batiment batiment;
+    protected boolean interet;
 
-    
+    // Constructeurs
     public Bavard(String nom, Batiment unBatiment) {
         this.nom = nom;
         this.batiment = unBatiment;
+        this.interet = true;
+    }
+
+    public Bavard(String nom, Batiment unBatiment, boolean unInteret) {
+        this.nom = nom;
+        this.batiment = unBatiment;
+        this.interet = unInteret;
     }
 
     public void sendPotin(String unSujet, String unCorps) {
@@ -19,6 +27,15 @@ public class Bavard implements PapotageListener{
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    
+    public boolean getInteret() {
+        return interet;
+    }
+
+    public void setInteret(boolean interet) {
+        this.interet = interet;
     }
 
     @Override

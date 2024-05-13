@@ -3,7 +3,6 @@
 public class Concierge implements PapotageListener{
     protected String nom;
     protected Batiment batiment;
-    //protected List<Bavard> listBavards;
 
     
     public String getNom() {
@@ -28,8 +27,11 @@ public class Concierge implements PapotageListener{
     }
     */
     public void transferPotin(PapotageEvent potin) {
-        for (PapotageListener listener : batiment.listBavards) {
-            listener.papotageEventReceived(potin);
+        for (Bavard bavard : batiment.listBavards) {
+            if (bavard.getInteret() == true) {
+                bavard.papotageEventReceived(potin);
+            }
+            
         }
     }
 
