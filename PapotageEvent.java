@@ -1,6 +1,6 @@
 public class PapotageEvent {
-    String sujet;
-    String corps;
+    protected String sujet;
+    protected String corps;
 
     // Methodes
     public void addPapotageListener() {

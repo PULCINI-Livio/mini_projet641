@@ -1,4 +1,4 @@
 public class Concierge implements PapotageListener{
-    String nom;
+    protected String nom;
 
 }
