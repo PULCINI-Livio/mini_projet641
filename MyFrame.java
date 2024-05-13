@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.*;
 
 public class MyFrame extends JFrame {
@@ -65,6 +68,18 @@ public class MyFrame extends JFrame {
         String[] bavardSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
         JList<String> bavardSubjectList = new JList<>(bavardSubjects);
         bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
+                    System.out.println("Sujet sélectionné : " + bavardSelectedSubject);
+                }
+            }
+        });
+
         JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
         bavard.add(bavardSscrollPane, BorderLayout.CENTER);
         
@@ -75,9 +90,20 @@ public class MyFrame extends JFrame {
         String[] conciergeSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
         JList<String> conciergeSubjectList = new JList<>(conciergeSubjects);
         conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        conciergeSubjectList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    String selectedSubject = conciergeSubjectList.getSelectedValue();
+                    System.out.println("Sujet sélectionné : " + selectedSubject);
+                }
+            }
+        });
+
         JScrollPane conciergeSscrollPane = new JScrollPane(conciergeSubjectList);
         concierge.add(conciergeSscrollPane, BorderLayout.CENTER);
-        
 
         // Ajouter les onglets au JTabbedPane
         tabbedPane.addTab("Creation", creation);
