@@ -6,7 +6,7 @@ public class Batiment {
 
 
     public Batiment() {
-        this.listBavards = null;
+        this.listBavards = new ArrayList<>();
         this.concierge = null;
     }
 
