@@ -119,7 +119,6 @@ public class MyFrame extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(new JLabel("Liste des bavards : "), gbc);
 
@@ -185,12 +184,43 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //----------------------------------------------------------------------------------//
         // Ajout composant pour onglet bavard
-        bavard.add(new JLabel("Envoyer un message ! "));
-        bavard.add(new JLabel("Sujet : "));
-        bavard.add(new JTextField(10));
-        bavard.add(new JLabel("Contenu : "));
-        bavard.add(new JTextField(30));
-        bavard.add(new JButton("Envoyer"));
+        bavard.setLayout(new GridBagLayout());
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        bavard.add(new JLabel("Sujet : "), gbc);       
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        bavard.add(new JTextField(10), gbc);
+
+        JPanel bavardContenuEnvoiPanel = new JPanel();
+        bavardContenuEnvoiPanel.setLayout(new GridLayout(2,1));
+        bavardContenuEnvoiPanel.add(new JLabel("Contenu : "));
+        bavardContenuEnvoiPanel.add(new JButton("Envoyer"));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        bavard.add(bavardContenuEnvoiPanel,gbc);
+
+        JTextArea persoTextArea = new JTextArea(10, 20); // 10 lignes de hauteur et 20 colonnes de largeur
+        JScrollPane scrollPane = new JScrollPane(persoTextArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2; // Occupe 2 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        bavard.add(scrollPane, gbc);
+
+       
 
         String[] bavardSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
         JList<String> bavardSubjectList = new JList<>(bavardSubjects);
@@ -206,12 +236,42 @@ public class MyFrame extends JFrame {
                 }
             }
         });
-
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
         JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
-        bavard.add(bavardSscrollPane, BorderLayout.CENTER);
+        bavard.add(bavardSscrollPane, gbc);
         
 
+        String bavardLabelText = "Beaucoup de texte ici...\n"; // Ajoutez autant de texte que vous le souhaitez
+        bavardLabelText += "Ce texte peut s'étendre sur plusieurs lignes et nécessiter une barre de défilement.";
+
+        JTextArea bavardReadTextArea = new JTextArea(bavardLabelText);
+        bavardReadTextArea.setEditable(false); // Désactive l'édition du texte
+        bavardReadTextArea.setLineWrap(true); // Active le retour à la ligne automatique
+        bavardReadTextArea.setWrapStyleWord(true); // Active le retour à la ligne au niveau des mots
+
+        JScrollPane bavardReadScrollPane = new JScrollPane(bavardReadTextArea);
+        bavardReadScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        bavardReadScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2; // Occupe 2 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 5.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        bavard.add(bavardReadScrollPane, gbc);
         
+        // Définir la taille maximale des cases du GridBagLayout
+        Dimension bavardMaxSize = new Dimension(200, 30);
+        for (Component component : bavard.getComponents()) { // Utiliser connexion au lieu de creation
+            component.setMaximumSize(bavardMaxSize);
+        }
+
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
@@ -222,7 +282,16 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //----------------------------------------------------------------------------------//
         // Ajout composant pour onglet concierge
-        concierge.add(new JLabel("Messages reçus : "));
+        concierge.setLayout(new GridBagLayout());
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; 
+        gbc.anchor = GridBagConstraints.WEST;
+        concierge.add(new JLabel("Messages reçus : "), gbc);  
 
         String[] conciergeSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
         JList<String> conciergeSubjectList = new JList<>(conciergeSubjects);
@@ -239,8 +308,55 @@ public class MyFrame extends JFrame {
             }
         });
 
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
         JScrollPane conciergeSscrollPane = new JScrollPane(conciergeSubjectList);
-        concierge.add(conciergeSscrollPane, BorderLayout.CENTER);
+        concierge.add(conciergeSscrollPane, gbc);
+        
+        
+        String conciergeLabelText = "Beaucoup de texte ici...\n"; // Ajoutez autant de texte que vous le souhaitez
+        conciergeLabelText += "Ce texte peut s'étendre sur plusieurs lignes et nécessiter une barre de défilement.";
+
+        JTextArea conciergeReadTextArea = new JTextArea(conciergeLabelText);
+        conciergeReadTextArea.setEditable(false); // Désactive l'édition du texte
+        conciergeReadTextArea.setLineWrap(true); // Active le retour à la ligne automatique
+        conciergeReadTextArea.setWrapStyleWord(true); // Active le retour à la ligne au niveau des mots
+
+        JScrollPane conciergeReadScrollPane = new JScrollPane(conciergeReadTextArea);
+        conciergeReadScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        conciergeReadScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2; // Occupe 2 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 5.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        concierge.add(conciergeReadScrollPane, gbc);
+
+        // Définir la taille maximale des cases du GridBagLayout
+        Dimension conciergeMaxSize = new Dimension(200, 30);
+        for (Component component : concierge.getComponents()) { // Utiliser connexion au lieu de creation
+            component.setMaximumSize(conciergeMaxSize);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Ajouter les onglets au JTabbedPane
         tabbedPane.addTab("Creation", creation);
