@@ -2,10 +2,17 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import javafx.event.ActionEvent;
+
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class MyFrame extends JFrame {
-    public MyFrame() {
+    protected Batiment baraque;
+    
+    public MyFrame(Batiment uneBaraque) {
+        this.baraque = uneBaraque;
         initComponents();
     }
 
@@ -42,7 +49,8 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        creation.add(new JTextField(10), gbc);
+        JTextField creationNomBavard = new JTextField(10);
+        creation.add(creationNomBavard, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -57,7 +65,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        creation.add(listeBatimentsComboBox, gbc);
+        //creation.add(listeBatimentsComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -67,10 +75,9 @@ public class MyFrame extends JFrame {
 
         JRadioButton creationOuiButton = new JRadioButton("Oui");
         JRadioButton creationNonButton = new JRadioButton("Non");
-        ButtonGroup creationGroup = new ButtonGroup();
-        creationGroup.add(creationOuiButton);
-        creationGroup.add(creationNonButton);
-
+        ButtonGroup creationRadioBtnGroup = new ButtonGroup();
+        creationRadioBtnGroup.add(creationOuiButton);
+        creationRadioBtnGroup.add(creationNonButton);
         // Créer un JPanel séparé pour les JRadioButtons
         JPanel creationRadioPanel = new JPanel();
         creationRadioPanel.setLayout(new BoxLayout(creationRadioPanel, BoxLayout.X_AXIS));
@@ -92,7 +99,8 @@ public class MyFrame extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.WEST;
-        creation.add(new JButton("Créer"), gbc);
+        JButton creationBavardBtn = new JButton("Créer");
+        creation.add(creationBavardBtn, gbc);
 
         // Définir la taille maximale des cases du GridBagLayout de creation
         Dimension creationMaxSize = new Dimension(200, 30);
@@ -100,7 +108,24 @@ public class MyFrame extends JFrame {
             component.setMaximumSize(creationMaxSize);
         }
 
-
+        // Ajouter un écouteur d'événements au bouton pour créer des bavards
+        creationBavardBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent arg0) {
+                // Récup nom du bavard
+                String nomBavard = creationNomBavard.getText(); 
+                
+                // Récup interet du bavard
+                boolean interetChoisi = true;
+                if (creationNonButton.isSelected()) {
+                    interetChoisi = false;
+                } 
+                
+                //System.out.println("Nom du bavard : " + nomBavard + " \nIntéret : " + selectedOption);
+                baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
+                JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
+            }
+        });
         
 
 
@@ -189,6 +214,7 @@ public class MyFrame extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
         bavard.add(new JLabel("Sujet : "), gbc);       
 
@@ -216,7 +242,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 1;
         gbc.gridwidth = 2; // Occupe 2 colonnes
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
+        gbc.weightx = 0;
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         bavard.add(scrollPane, gbc);
 
@@ -289,14 +315,22 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0; 
+        gbc.weighty = 0; 
         gbc.anchor = GridBagConstraints.WEST;
         concierge.add(new JLabel("Messages reçus : "), gbc);  
 
-        String[] conciergeSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
-        JList<String> conciergeSubjectList = new JList<>(conciergeSubjects);
-        conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Creer une liste des messages que le concierge reçoit
+        ArrayList<String> conciergeSubjects = new ArrayList<>();
+        for (PapotageEvent potin : baraque.concierge.listPapotages) {
+            conciergeSubjects.add(potin.sujet);
+        }
 
+        
+        JTextArea conciergeReadTextArea = new JTextArea("initialisation");
+
+        // créer une JList à partir de l'ArrayList
+        JList<String> conciergeSubjectList = new JList<>(conciergeSubjects.toArray(new String[0]));
+        conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conciergeSubjectList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -304,6 +338,12 @@ public class MyFrame extends JFrame {
                 if (!e.getValueIsAdjusting()) {
                     String selectedSubject = conciergeSubjectList.getSelectedValue();
                     System.out.println("Sujet sélectionné : " + selectedSubject);
+                    for (PapotageEvent potin : baraque.concierge.listPapotages) {
+                        if (selectedSubject == potin.sujet) {
+                            conciergeReadTextArea.setText(potin.corps);
+                        }
+                    }
+                    
                 }
             }
         });
@@ -318,10 +358,7 @@ public class MyFrame extends JFrame {
         concierge.add(conciergeSscrollPane, gbc);
         
         
-        String conciergeLabelText = "Beaucoup de texte ici...\n"; // Ajoutez autant de texte que vous le souhaitez
-        conciergeLabelText += "Ce texte peut s'étendre sur plusieurs lignes et nécessiter une barre de défilement.";
 
-        JTextArea conciergeReadTextArea = new JTextArea(conciergeLabelText);
         conciergeReadTextArea.setEditable(false); // Désactive l'édition du texte
         conciergeReadTextArea.setLineWrap(true); // Active le retour à la ligne automatique
         conciergeReadTextArea.setWrapStyleWord(true); // Active le retour à la ligne au niveau des mots
@@ -369,16 +406,9 @@ public class MyFrame extends JFrame {
         add(tabbedPane, BorderLayout.CENTER);
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setTitle("Interface avec onglets");
+        setTitle("Interface de bavardage");
         setSize(400, 300);
         setLocationRelativeTo(null);
     }
     
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MyFrame frame = new MyFrame();
-            frame.setVisible(true);
-        });
-    }
 }
