@@ -9,7 +9,6 @@ public class PapotageEvent extends EventObject{
         this.sujet = unSujet;
         this.corps = unCorps;
     }
-
     
 
     // Methodes
