@@ -23,6 +23,18 @@ public class Main {
     //System.out.println(polytech.listBavards);
 
     charlotte.sendPotin("je suis un sujet", "salut la mif");
-    }
+    charlotte.sendPotin("oksour", "j'ai besoin d'aide");
+    charlotte.sendPotin("aie", "je fais une depression");
+    charlotte.sendPotin("rip", "jvais pas finir l'annee");
+    // un paramètre dans la generation de la fenetre qui sera le batiment associé
+    // donc une fenetre par batiment 
+    MyFrame frame = new MyFrame(polytech);
+    frame.setVisible(true);
 
+
+
+
+
+    } 
 }
+
