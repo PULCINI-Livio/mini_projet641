@@ -12,6 +12,13 @@ public class Bavard implements PapotageListener{
         this.connecte = true; 
     }
 
+    public Bavard(String nom, Batiment unBatiment, boolean unInteret) {
+        this.nom = nom;
+        this.batiment = unBatiment;
+        this.interet = unInteret;
+        this.connecte = true; 
+    }
+
     public Bavard(String nom, Batiment unBatiment, boolean unInteret, boolean estConnecte) {
         this.nom = nom;
         this.batiment = unBatiment;
