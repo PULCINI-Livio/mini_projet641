@@ -31,9 +31,9 @@ public class Concierge implements PapotageListener{
     }
 
     @Override
-    public void papotageEventReceived(PapotageEvent potin) {
-        listPapotages.add(potin);
-        transferPotin(potin);
+    public void papotageEventReceived(PapotageEvent event) {
+        listPapotages.add(event);
+        transferPotin(event);
     }
 
     
