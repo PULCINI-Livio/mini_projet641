@@ -191,31 +191,16 @@ public class MyFrame extends JFrame {
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         bavard.add(scrollPane, gbc);
 
-       
-
-        String[] bavardSubjects = {"Sujet 1", "Sujet 2", "Sujet 3", "Sujet 4", "Sujet 5", "Sujet 6", "Sujet 7", "Sujet 8", "Sujet 9", "Sujet 10"};
-        JList<String> bavardSubjectList = new JList<>(bavardSubjects);
-        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
-                    System.out.println("Sujet sélectionné : " + bavardSelectedSubject);
+        // Creer une liste des messages que le bavard reçoit
+        DefaultListModel<String> bavardSubjectsModel = new DefaultListModel<>();
+        String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+        for (Bavard unBavard : baraque.listBavards) {
+            if (unBavard.getNom() == nomBavardConnecte) {
+                for (PapotageEvent potin : unBavard.listPapotages) {
+                    bavardSubjectsModel.addElement(potin.sujet);
                 }
             }
-        });
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 1; // Occupe 1 colonnes
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0; // Ajoute du poids en hauteur
-        JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
-        bavard.add(bavardSscrollPane, gbc);
-        
+        }
 
         String bavardLabelText = "Beaucoup de texte ici...\n"; // Ajoutez autant de texte que vous le souhaitez
         bavardLabelText += "Ce texte peut s'étendre sur plusieurs lignes et nécessiter une barre de défilement.";
@@ -236,6 +221,49 @@ public class MyFrame extends JFrame {
         gbc.weightx = 5.0;
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         bavard.add(bavardReadScrollPane, gbc);
+
+
+        
+
+
+        // créer une JList à partir de l'ArrayList
+        JList<String> bavardSubjectList = new JList<>(bavardSubjectsModel);
+        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
+                    System.out.println("Sujet sélectionné : " + bavardSelectedSubject);
+                    
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom() == nomBavardConnecte) {
+                            for (PapotageEvent potin : unBavard.listPapotages) {
+                                if (potin.sujet == bavardSelectedSubject) {
+                                    bavardReadTextArea.setText(potin.corps);
+                                }
+                            }
+                        }
+                    }
+
+
+                    
+                }
+            }
+        });
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
+        bavard.add(bavardSscrollPane, gbc);
+        
+
+        
         
         // Définir la taille maximale des cases du GridBagLayout
         Dimension bavardMaxSize = new Dimension(200, 30);
@@ -249,16 +277,36 @@ public class MyFrame extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
                 // Récup nom du bavard
-                //String nomBavard = creationNomBavard.getText(); 
                 System.out.println("ca marche");
-                // Récup nom du bavard
-                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem();
 
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom() == nomBavardConnecte) {
                         unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
                     }
                 }
+
+                // Créer une nouvelle liste des bavards connecte
+                ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.connecte == true) {
+                        nouvelleListeBavardsConnecte.add(unBavard.getNom());
+                    }
+                }
+
+                
+                
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
+                DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom() == nomBavardConnecte) {
+                        for (PapotageEvent potin : unBavard.listPapotages) {
+                            newBavardSubjectsModel.addElement(potin.sujet);
+                        }
+                    }
+                }
+
+                // Définir le nouveau DefaultListModel sur la JList
+                bavardSubjectList.setModel(newBavardSubjectsModel);
                 //JOptionPane.showMessageDialog(null," créé avec succès");
             }
         });
