@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MyFrame extends JFrame {
     protected Batiment baraque;
@@ -35,6 +36,15 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                  //
 //----------------------------------------------------------------------------------//
+        // Creer une liste des messages que le bavard reçoit
+        DefaultListModel<Bavard> creationBavardModel = new DefaultListModel<>();
+        for (Bavard unBavard : baraque.listBavards) { 
+                creationBavardModel.addElement(unBavard);
+            }
+    
+
+
+
         // Ajout composants pour onglet creation
         creation.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -108,6 +118,10 @@ public class MyFrame extends JFrame {
                 
                 //System.out.println("Nom du bavard : " + nomBavard + " \nIntéret : " + selectedOption);
                 baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
+                DefaultListModel<Bavard> newCreationBavardModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) { 
+                    newCreationBavardModel.addElement(unBavard);
+                }
                 JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
             }
         });
@@ -135,6 +149,7 @@ public class MyFrame extends JFrame {
 
         // Creer une liste des bavards connectés
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
+        
         for (Bavard unBavard : baraque.listBavards) {
             if (unBavard.connecte == true) {
                 listeBavardsConnecte.add(unBavard.getNom());
@@ -337,7 +352,7 @@ public class MyFrame extends JFrame {
 
         //Créer du menu déroulant avec tous les bavards
         ArrayList<String> bavardsListe = new ArrayList<>();
-        for (Bavard personne : baraque.listBavards) {
+        for (Bavard personne : newCreationBavardModel) {
             bavardsListe.add(personne.getNom());
         }
         JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
