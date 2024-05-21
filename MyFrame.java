@@ -53,21 +53,6 @@ public class MyFrame extends JFrame {
         creation.add(creationNomBavard, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        creation.add(new JLabel("Batiment : "), gbc);
-
-
-        String[] listeBatiments = {"Élément 1", "Élément 2", "Élément 3"};
-        JComboBox<String> listeBatimentsComboBox = new JComboBox<>(listeBatiments);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        //creation.add(listeBatimentsComboBox, gbc);
-
-        gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
