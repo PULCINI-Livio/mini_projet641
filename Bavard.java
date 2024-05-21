@@ -1,8 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Bavard implements PapotageListener{
     protected String nom;
     protected Batiment batiment;
     protected boolean interet;
     protected boolean connecte; 
+    protected List<PapotageEvent> listPapotages; 
 
     // Constructeurs
     public Bavard(String nom, Batiment unBatiment) {
@@ -10,6 +14,7 @@ public class Bavard implements PapotageListener{
         this.batiment = unBatiment;
         this.interet = true;
         this.connecte = true; 
+        this.listPapotages = new ArrayList<>();
     }
 
     public Bavard(String nom, Batiment unBatiment, boolean unInteret) {
@@ -17,6 +22,7 @@ public class Bavard implements PapotageListener{
         this.batiment = unBatiment;
         this.interet = unInteret;
         this.connecte = true; 
+        this.listPapotages = new ArrayList<>();
     }
 
     public Bavard(String nom, Batiment unBatiment, boolean unInteret, boolean estConnecte) {
@@ -24,6 +30,7 @@ public class Bavard implements PapotageListener{
         this.batiment = unBatiment;
         this.interet = unInteret;
         this.connecte = estConnecte; 
+        this.listPapotages = new ArrayList<>();
     }
 
     public void sendPotin(String unSujet, String unCorps) {
@@ -59,6 +66,7 @@ public class Bavard implements PapotageListener{
     @Override
     public void papotageEventReceived(PapotageEvent event) {
         System.out.println(nom + " a reçu un message : " + event.corps);
+        listPapotages.add(event);
     }
 
     
