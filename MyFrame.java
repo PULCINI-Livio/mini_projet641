@@ -132,8 +132,12 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(new JLabel("Liste des bavards : "), gbc);
 
-        String[] listeBavards = {"Élément 1", "Élément 2", "Élément 3"};
-        JComboBox<String> listeBavardsComboBox = new JComboBox<>(listeBavards);
+        //Créer du menu déroulant avec tous les bavards
+        ArrayList<String> bavardsListe = new ArrayList<>();
+        for (Bavard personne : baraque.listBavards) {
+            bavardsListe.add(personne.getNom());
+        }
+        JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -175,7 +179,33 @@ public class MyFrame extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.WEST;
-        connexion.add(new JButton("Mettre à jour"), gbc);
+        JButton connexionActualisationBtn = new JButton("Mettre à jour");
+        connexion.add(connexionActualisationBtn, gbc);
+
+        // Ajouter un écouteur d'événements au bouton pour mettre à jour le fait d'être connecté
+        connexionActualisationBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent arg0) {
+                // Récup nom du bavard
+                String nomBavard = (String) listeBavardsComboBox.getSelectedItem(); 
+                
+                // Récup interet du bavard
+                boolean connexionChoisi = true;
+                if (connexionNonButton.isSelected()) {
+                    connexionChoisi = false;
+                } 
+                
+                for (Bavard personne : baraque.listBavards) {
+                    if (personne.getNom() == nomBavard) {
+                        personne.setConnecte(connexionChoisi);
+                        JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
+                    }
+                }
+                
+            }
+        });
+
+
 
         // Définir la taille maximale des cases du GridBagLayout
         Dimension connexionMaxSize = new Dimension(200, 30);

@@ -16,9 +16,9 @@ public class Main {
     polytech.addBavard(louna);
     Bavard cyprien = new Bavard("cyprien", polytech);
     polytech.addBavard(cyprien);
-    Bavard livio = new Bavard("livio", polytech, false);
+    Bavard livio = new Bavard("livio", polytech, false,  false);
     polytech.addBavard(livio);
-    Bavard mathieu = new Bavard("mathieu", polytech, false);
+    Bavard mathieu = new Bavard("mathieu", polytech, false, false);
     polytech.addBavard(mathieu);
     //System.out.println(polytech.listBavards);
 
