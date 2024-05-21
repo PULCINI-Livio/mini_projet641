@@ -1,9 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import javafx.event.ActionEvent;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -14,6 +11,8 @@ public class MyFrame extends JFrame {
     protected JList<String> bavardSubjectList;
     protected JList<String> conciergeSubjectList;
     protected JComboBox<String> listeBavardsConnecteComboBox;
+    protected JList<String> logConnexionList;
+    protected JList<String> logDeconnexionList;
 
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
@@ -33,7 +32,7 @@ public class MyFrame extends JFrame {
 //                                                                                   //
 //                                                                                  //
 //                                                                                   //
-//                                   INIT                                           //
+//                                INITITIALISATION                                  //
 //                                                                                   //
 //                                                                                  //
 //                                                                                   //
@@ -61,6 +60,8 @@ public class MyFrame extends JFrame {
         conciergeSubjectList = new JList<>();
         listeBavardsComboBox = new JComboBox<>();
         bavardSubjectList = new JList<>();
+        logConnexionList = new JList<>();
+        logDeconnexionList = new JList<>();
 //----------------------------------------------------------------------------------//
 //                                                                                 //
 //                                                                                  //
@@ -180,7 +181,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        bavard.add(new JLabel("Interface : "), gbc);  
+        bavard.add(new JLabel("Bavards connectés : "), gbc);  
 
         
         //Créer un DefaultComboBoxModel avec la liste des bavards connectés
@@ -192,6 +193,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
+        gbc.gridwidth = 2; // Occupe 2 colonnes
         bavard.add(listeBavardsConnecteComboBox, gbc);
 
         gbc.gridx = 0;
@@ -204,6 +206,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
+        gbc.gridwidth = 2; // Occupe 2 colonnes
         JTextField bavardSujetEnvoye = new JTextField(10);
         bavard.add(bavardSujetEnvoye, gbc);
 
@@ -273,14 +276,14 @@ public class MyFrame extends JFrame {
                 String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom().equals(nomBavardConnecte)) {
-                        System.out.println(unBavard.getNom());
+                        //System.out.println(unBavard.getNom());
                         for (PapotageEvent potin : unBavard.listPapotages) {
-                            System.out.println(potin.sujet);
+                            //System.out.println(potin.sujet);
                             currentNewBavardSubjectsModel.addElement(potin.sujet);
                         }
                     }
                 }
-                System.out.println("changement de bavard courant");
+                //System.out.println("changement de bavard courant");
                 // Définir le nouveau DefaultListModel sur la JList
                 bavardSubjectList.setModel(currentNewBavardSubjectsModel);
                 //JOptionPane.showMessageDialog(null," créé avec succès");
@@ -393,11 +396,49 @@ public class MyFrame extends JFrame {
         });
         
 
-        // Partie logs
+        // Partie historique des connexions/deconnexions
 
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        bavard.add(new JLabel("Historique des connexions: "), gbc); 
 
-        // Creer une liste des logs 
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        bavard.add(new JLabel("Historique des déconnexions : "), gbc); 
+
+        // Creer une liste des logs de co que reçoivent les bavards connectés
+        DefaultListModel<String> logConnexionListModel = new DefaultListModel<>();
+        // Définir le premier DefaultListModel sur la JList
+        logConnexionList.setModel(logConnexionListModel);
+
+        // Creer une liste des logs de deco que reçoivent les bavards connectés
+        DefaultListModel<String> logDeconnexionListModel = new DefaultListModel<>();
+        // Définir le premier DefaultListModel sur la JList
+        logDeconnexionList.setModel(logDeconnexionListModel);
         
+
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.gridheight = 5; // Occupe 3 lignes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        JScrollPane logConnexionScrollPane = new JScrollPane(logConnexionList);
+        bavard.add(logConnexionScrollPane, gbc);
+
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.gridwidth = 5; // Occupe 1 colonnes
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        JScrollPane logDeconnexionScrollPane = new JScrollPane(logDeconnexionList);
+        bavard.add(logDeconnexionScrollPane, gbc);
 
 //----------------------------------------------------------------------------------//
 //                                                                                  //
@@ -411,6 +452,8 @@ public class MyFrame extends JFrame {
         // Ajout composant pour onglet connexion
         connexion.setLayout(new GridBagLayout());
 
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
@@ -428,6 +471,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(listeBavardsComboBox, gbc);
 
@@ -499,6 +543,21 @@ public class MyFrame extends JFrame {
                 DefaultComboBoxModel<String> nouveauComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavardsConnecte.toArray(new String[0]));
                 // Définir le nouveau DefaultComboBoxModel sur la JComboBox
                 listeBavardsConnecteComboBox.setModel(nouveauComboBoxModel);
+
+
+                // MAJ des logs de connexion
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                        for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
+                            newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.currentTime);
+                        }
+                    }
+                }
+
+                // Définir le nouveau DefaultListModel sur la JList
+                logConnexionList.setModel(newLogConnexionListModel);
             }   
         });
         
@@ -506,7 +565,7 @@ public class MyFrame extends JFrame {
 
 
         // Définir la taille maximale des cases du GridBagLayout
-        Dimension connexionMaxSize = new Dimension(200, 30);
+        Dimension connexionMaxSize = new Dimension(200, 50);
         for (Component component : connexion.getComponents()) { // Utiliser connexion au lieu de creation
             component.setMaximumSize(connexionMaxSize);
         }
@@ -564,8 +623,8 @@ public class MyFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
-        JScrollPane conciergeSscrollPane = new JScrollPane(conciergeSubjectList);
-        concierge.add(conciergeSscrollPane, gbc);
+        JScrollPane conciergeScrollPane = new JScrollPane(conciergeSubjectList);
+        concierge.add(conciergeScrollPane, gbc);
         
         
 
@@ -607,7 +666,7 @@ public class MyFrame extends JFrame {
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(baraque.nom);
-        setSize(400, 300);
+        setSize(600, 500);
         setLocationRelativeTo(null);
     }
     
