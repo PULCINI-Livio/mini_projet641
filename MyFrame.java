@@ -222,7 +222,7 @@ public class MyFrame extends JFrame {
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         bavard.add(bavardReadScrollPane, gbc);
 
-
+        
         
 
 
@@ -247,12 +247,10 @@ public class MyFrame extends JFrame {
                             }
                         }
                     }
-
-
-                    
                 }
             }
         });
+
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 1; // Occupe 1 colonnes
@@ -311,6 +309,13 @@ public class MyFrame extends JFrame {
             }
         });
         
+
+        // Partie logs
+
+
+        // Creer une liste des logs 
+        
+
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
