@@ -25,15 +25,44 @@ public class MyFrame extends JFrame {
         JPanel bavard = new JPanel();
         JPanel concierge = new JPanel();
     
-
 //----------------------------------------------------------------------------------//
+//                                                                                   //
 //                                                                                  //
+//                                                                                   //
+//                                   INIT LISTE                                     //
+//                                                                                   //
 //                                                                                  //
+//                                                                                   //
+//----------------------------------------------------------------------------------//
+
+        // Liste des bavards connectés dans onglet bavard
+        ArrayList<String> listeBavardsConnecte = new ArrayList<>();
+        for (Bavard unBavard : baraque.listBavards) {
+            if (unBavard.connecte == true) {
+                listeBavardsConnecte.add(unBavard.getNom());
+            }
+        }
+
+        // Lis avec tous les bavards de l'onglet connexion
+        ArrayList<String> bavardsListe = new ArrayList<>();
+        for (Bavard personne : baraque.listBavards) {
+            bavardsListe.add(personne.getNom());
+        }
+
+        // Creer une liste des messages que le concierge reçoit dans l'onglet concierge
+        ArrayList<String> conciergeSubjects = new ArrayList<>();
+        for (PapotageEvent potin : baraque.concierge.listPapotages) {
+            conciergeSubjects.add(potin.sujet);
+        }
+        
+//----------------------------------------------------------------------------------//
+//                                                                                 //
 //                                                                                  //
+//                                                                                 //
 //                                 ONGLET CREATION                                  //
+//                                                                                 //
 //                                                                                  //
-//                                                                                  //
-//                                                                                  //
+//                                                                                 //
 //----------------------------------------------------------------------------------//
         // Ajout composants pour onglet creation
         creation.setLayout(new GridBagLayout());
@@ -133,21 +162,11 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         bavard.add(new JLabel("Interface : "), gbc);  
 
-        // Creer une liste des bavards connectés
-        ArrayList<String> listeBavardsConnecte = new ArrayList<>();
-        for (Bavard unBavard : baraque.listBavards) {
-            if (unBavard.connecte == true) {
-                listeBavardsConnecte.add(unBavard.getNom());
-            }
-        }
-        //listeBavardsConnecteComboBox = new JComboBox<>(listeBavardsConnecte.toArray(new String[0]));
-
+        
         //Créer un DefaultComboBoxModel avec la liste des bavards connectés
         DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>(listeBavardsConnecte.toArray(new String[0]));
-
         // Créer la JComboBox avec le DefaultComboBoxModel
         JComboBox<String> listeBavardsConnecteComboBox = new JComboBox<>(comboBoxModel);
-
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -335,11 +354,7 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         connexion.add(new JLabel("Liste des bavards : "), gbc);
 
-        //Créer du menu déroulant avec tous les bavards
-        ArrayList<String> bavardsListe = new ArrayList<>();
-        for (Bavard personne : baraque.listBavards) {
-            bavardsListe.add(personne.getNom());
-        }
+        
         JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
 
         gbc.gridx = 1;
@@ -451,11 +466,7 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         concierge.add(new JLabel("Messages reçus : "), gbc);  
 
-        // Creer une liste des messages que le concierge reçoit
-        ArrayList<String> conciergeSubjects = new ArrayList<>();
-        for (PapotageEvent potin : baraque.concierge.listPapotages) {
-            conciergeSubjects.add(potin.sujet);
-        }
+        
 
         
         JTextArea conciergeReadTextArea = new JTextArea("initialisation");
