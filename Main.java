@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args)  {
     // Création du batiment
-    Batiment polytech = new Batiment();
+    Batiment polytech = new Batiment("polytech");
     // Création du concierge
     Concierge axelle = new Concierge("axelle", polytech);
     polytech.setConcierge(axelle);
@@ -30,8 +30,37 @@ public class Main {
     MyFrame frame = new MyFrame(polytech);
     frame.setVisible(true);
 
-    livio.afficheListePapotages();
+    //livio.afficheListePapotages();
 
+// Création du batiment
+    Batiment iut = new Batiment("iut");
+    // Création du concierge
+    Concierge paul = new Concierge("paul", iut);
+    iut.setConcierge(paul);
+
+    // Création des Bavards
+    Bavard charlott = new Bavard("charlott", iut);
+    iut.addBavard(charlott);
+    Bavard emm = new Bavard("emm",iut); 
+    iut.addBavard(emm);
+    Bavard loun = new Bavard("loun", iut);
+    iut.addBavard(loun);
+    Bavard cyprie = new Bavard("cyprie", iut);
+    iut.addBavard(cyprie);
+    Bavard livi = new Bavard("livi", iut, false);
+    iut.addBavard(livi);
+    Bavard mathie = new Bavard("mathie", iut, false, false);
+    iut.addBavard(mathie);
+    //System.out.println(iut.listBavards);
+
+    charlott.sendPotin("je sus un sujet", "ut la mif");
+    charlott.sendPotin("oksur", "j'ai besoi'aide");
+    charlott.sendPotin("ae", "je fs une ");
+    charlott.sendPotin("rp", "jvais pasinir annee");
+    // un paramètre dans la generation de la fenetre qui sera le batiment associé
+    // donc une fenetre par batiment 
+    MyFrame autreFrame = new MyFrame(iut);
+    autreFrame.setVisible(true);
 
 
     } 

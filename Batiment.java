@@ -3,11 +3,12 @@ import java.util.*;
 public class Batiment {
     protected List<Bavard> listBavards;
     protected Concierge concierge;
-
+    protected String nom;
     // Constructeur
-    public Batiment() {
+    public Batiment(String unNom) {
         this.listBavards = new ArrayList<>();
         this.concierge = null;
+        this.nom = unNom;
     }
 
     // Methodes

@@ -606,7 +606,7 @@ public class MyFrame extends JFrame {
         add(tabbedPane, BorderLayout.CENTER);
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setTitle("Interface de bavardage");
+        setTitle(baraque.nom);
         setSize(400, 300);
         setLocationRelativeTo(null);
     }
