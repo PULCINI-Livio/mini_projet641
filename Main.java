@@ -2,7 +2,6 @@ public class Main {
     public static void main(String[] args)  {
     // Création du batiment
     Batiment polytech = new Batiment();
-    
     // Création du concierge
     Concierge axelle = new Concierge("axelle", polytech);
     polytech.setConcierge(axelle);
