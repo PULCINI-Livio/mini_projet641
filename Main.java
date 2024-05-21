@@ -15,7 +15,7 @@ public class Main {
     polytech.addBavard(louna);
     Bavard cyprien = new Bavard("cyprien", polytech);
     polytech.addBavard(cyprien);
-    Bavard livio = new Bavard("livio", polytech, false,  false);
+    Bavard livio = new Bavard("livio", polytech, false);
     polytech.addBavard(livio);
     Bavard mathieu = new Bavard("mathieu", polytech, false, false);
     polytech.addBavard(mathieu);
@@ -30,7 +30,7 @@ public class Main {
     MyFrame frame = new MyFrame(polytech);
     frame.setVisible(true);
 
-
+    livio.afficheListePapotages();
 
 
 

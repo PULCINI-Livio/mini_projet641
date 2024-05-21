@@ -10,7 +10,11 @@ import java.util.ArrayList;
 
 public class MyFrame extends JFrame {
     protected Batiment baraque;
-    
+    protected JComboBox<String> listeBavardsComboBox;
+    protected JList<String> bavardSubjectList;
+    protected JList<String> conciergeSubjectList;
+    protected JComboBox<String> listeBavardsConnecteComboBox;
+
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
         initComponents();
@@ -29,7 +33,7 @@ public class MyFrame extends JFrame {
 //                                                                                   //
 //                                                                                  //
 //                                                                                   //
-//                                   INIT LISTE                                     //
+//                                   INIT                                           //
 //                                                                                   //
 //                                                                                  //
 //                                                                                   //
@@ -43,7 +47,7 @@ public class MyFrame extends JFrame {
             }
         }
 
-        // Lis avec tous les bavards de l'onglet connexion
+        // Liste avec tous les bavards de l'onglet connexion
         ArrayList<String> bavardsListe = new ArrayList<>();
         for (Bavard personne : baraque.listBavards) {
             bavardsListe.add(personne.getNom());
@@ -54,7 +58,9 @@ public class MyFrame extends JFrame {
         for (PapotageEvent potin : baraque.concierge.listPapotages) {
             conciergeSubjects.add(potin.sujet);
         }
-        
+        conciergeSubjectList = new JList<>();
+        listeBavardsComboBox = new JComboBox<>();
+        bavardSubjectList = new JList<>();
 //----------------------------------------------------------------------------------//
 //                                                                                 //
 //                                                                                  //
@@ -121,28 +127,42 @@ public class MyFrame extends JFrame {
         for (Component component : creation.getComponents()) {
             component.setMaximumSize(creationMaxSize);
         }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////:
         // Ajouter un écouteur d'événements au bouton pour créer des bavards
         creationBavardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
-                // Récup nom du bavard
+                // Récup nom du bavard du JTextField
                 String nomBavard = creationNomBavard.getText(); 
                 
-                // Récup interet du bavard
+                // Récup interet du bavard du JRadioButton
                 boolean interetChoisi = true;
                 if (creationNonButton.isSelected()) {
                     interetChoisi = false;
                 } 
                 
-                //System.out.println("Nom du bavard : " + nomBavard + " \nIntéret : " + selectedOption);
+                // MAJ des entités liés à la création d'un bavard
                 baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
                 JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
+
+                // MAJ dans la comboBox de l'onglet connexion
+
+                // Créer une nouvelle liste des bavards 
+                ArrayList<String> nouvelleListeBavards = new ArrayList<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    nouvelleListeBavards.add(unBavard.getNom());
+                }
+                //System.out.println(nouvelleListeBavards.get(nouvelleListeBavards.size()-1));;
+                // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards 
+                DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
+                // Définir le nouveau DefaultComboBoxModel sur la JComboBox
+                listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
+
+                // Redessiner la JComboBox
+                //listeBavardsComboBox.repaint();
             }
         });
         
-
-
 
 //----------------------------------------------------------------------------------//
 //                                                                                  //
@@ -164,9 +184,10 @@ public class MyFrame extends JFrame {
 
         
         //Créer un DefaultComboBoxModel avec la liste des bavards connectés
-        DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>(listeBavardsConnecte.toArray(new String[0]));
+        DefaultComboBoxModel<String> listeBavardsConnecteComboBoxModel = new DefaultComboBoxModel<>(listeBavardsConnecte.toArray(new String[0]));
         // Créer la JComboBox avec le DefaultComboBoxModel
-        JComboBox<String> listeBavardsConnecteComboBox = new JComboBox<>(comboBoxModel);
+        listeBavardsConnecteComboBox = new JComboBox<>();
+        listeBavardsConnecteComboBox.setModel(listeBavardsConnecteComboBoxModel);
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -242,13 +263,38 @@ public class MyFrame extends JFrame {
         bavard.add(bavardReadScrollPane, gbc);
 
         
-        
+        // Quand on change de bavard courant
+        listeBavardsConnecteComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                // MAJ des sujets
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets du bavard courant
+                DefaultListModel<String> currentNewBavardSubjectsModel = new DefaultListModel<>();
+                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                        System.out.println(unBavard.getNom());
+                        for (PapotageEvent potin : unBavard.listPapotages) {
+                            System.out.println(potin.sujet);
+                            currentNewBavardSubjectsModel.addElement(potin.sujet);
+                        }
+                    }
+                }
+                System.out.println("changement de bavard courant");
+                // Définir le nouveau DefaultListModel sur la JList
+                bavardSubjectList.setModel(currentNewBavardSubjectsModel);
+                //JOptionPane.showMessageDialog(null," créé avec succès");
+                bavardSubjectList.repaint();
 
+
+                
+            }
+        });
+
+        // Quand on sélectionne un sujet
 
         // créer une JList à partir de l'ArrayList
-        JList<String> bavardSubjectList = new JList<>(bavardSubjectsModel);
-        bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        bavardSubjectList.setModel(bavardSubjectsModel);
         bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -288,7 +334,7 @@ public class MyFrame extends JFrame {
             component.setMaximumSize(bavardMaxSize);
         }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////:
         // Ajouter un écouteur d'événements au bouton pour envoyer un message
         BavardSendBtn.addActionListener(new ActionListener() {
             @Override
@@ -296,6 +342,7 @@ public class MyFrame extends JFrame {
                 // Récup nom du bavard
                 System.out.println("ca marche");
 
+                // Envoie du msg par le bavard courant au concierge
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom() == nomBavardConnecte) {
                         unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
@@ -311,7 +358,7 @@ public class MyFrame extends JFrame {
                 }
 
                 
-                
+                // MAJ des sujets
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
@@ -325,6 +372,23 @@ public class MyFrame extends JFrame {
                 // Définir le nouveau DefaultListModel sur la JList
                 bavardSubjectList.setModel(newBavardSubjectsModel);
                 //JOptionPane.showMessageDialog(null," créé avec succès");
+
+
+                // MAJ des sujets
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
+                DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom() == nomBavardConnecte) {
+                        for (PapotageEvent potin : unBavard.listPapotages) {
+                            newConciergeSubjectsModel.addElement(potin.sujet);
+                        }
+                    }
+                }
+
+                // Définir le nouveau DefaultListModel sur la JList
+                conciergeSubjectList.setModel(newConciergeSubjectsModel);
+                //JOptionPane.showMessageDialog(null," créé avec succès");
+
             }
         });
         
@@ -354,8 +418,11 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         connexion.add(new JLabel("Liste des bavards : "), gbc);
 
-        
-        JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
+        //Créer un DefaultComboBoxModel avec la liste des bavards connectés
+        DefaultComboBoxModel<String> listeBavardsComboBoxModel = new DefaultComboBoxModel<>(bavardsListe.toArray(new String[0]));
+        // Créer la JComboBox avec le DefaultComboBoxModel
+        listeBavardsComboBox = new JComboBox<>();
+        listeBavardsComboBox.setModel(listeBavardsComboBoxModel);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -472,7 +539,7 @@ public class MyFrame extends JFrame {
         JTextArea conciergeReadTextArea = new JTextArea("initialisation");
 
         // créer une JList à partir de l'ArrayList
-        JList<String> conciergeSubjectList = new JList<>(conciergeSubjects.toArray(new String[0]));
+        conciergeSubjectList = new JList<>(conciergeSubjects.toArray(new String[0]));
         conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conciergeSubjectList.addListSelectionListener(new ListSelectionListener() {
@@ -523,16 +590,6 @@ public class MyFrame extends JFrame {
         for (Component component : concierge.getComponents()) { // Utiliser connexion au lieu de creation
             component.setMaximumSize(conciergeMaxSize);
         }
-
-
-
-
-
-
-
-
-
-
 
 
 

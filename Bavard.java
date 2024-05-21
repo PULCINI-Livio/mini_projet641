@@ -71,10 +71,18 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         this.connecte = connecte;
     }
 
+    public void afficheListePapotages() {
+        for (PapotageEvent event : listPapotages) {
+            System.out.println(event.sujet);
+        }
+        System.out.println("voila tous les papotages");
+    }
     @Override
     public void papotageEventReceived(PapotageEvent event) {
         System.out.println(nom + " a reçu un message : " + event.corps);
-        listPapotages.add(event);
+        if (interet) {
+            listPapotages.add(event);
+        }
     }
 
     @Override
