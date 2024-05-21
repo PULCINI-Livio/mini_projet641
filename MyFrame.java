@@ -131,7 +131,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 0;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        bavard.add(new JLabel("Interface "), gbc);  
+        bavard.add(new JLabel("Interface : "), gbc);  
 
         // Creer une liste des bavards connectés
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
@@ -164,10 +164,12 @@ public class MyFrame extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        bavard.add(new JTextField(10), gbc);
+        JTextField bavardSujetEnvoye = new JTextField(10);
+        bavard.add(bavardSujetEnvoye, gbc);
 
         JPanel bavardContenuEnvoiPanel = new JPanel();
         bavardContenuEnvoiPanel.setLayout(new GridLayout(2,1));
+        
         bavardContenuEnvoiPanel.add(new JLabel("Contenu : "));
         JButton BavardSendBtn = new JButton("Envoyer");
         bavardContenuEnvoiPanel.add(BavardSendBtn);
@@ -249,7 +251,14 @@ public class MyFrame extends JFrame {
                 // Récup nom du bavard
                 //String nomBavard = creationNomBavard.getText(); 
                 System.out.println("ca marche");
-                
+                // Récup nom du bavard
+                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem();
+
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom() == nomBavardConnecte) {
+                        unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
+                    }
+                }
                 //JOptionPane.showMessageDialog(null," créé avec succès");
             }
         });
