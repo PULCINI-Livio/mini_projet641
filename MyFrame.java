@@ -119,105 +119,6 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                  //
 //                                                                                  //
-//                                 ONGLET CONNEXION                                 //
-//                                                                                  //
-//                                                                                  //
-//                                                                                  //
-//----------------------------------------------------------------------------------//
-        // Ajout composant pour onglet connexion
-        connexion.setLayout(new GridBagLayout());
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-        connexion.add(new JLabel("Liste des bavards : "), gbc);
-
-        //Créer du menu déroulant avec tous les bavards
-        ArrayList<String> bavardsListe = new ArrayList<>();
-        for (Bavard personne : baraque.listBavards) {
-            bavardsListe.add(personne.getNom());
-        }
-        JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        connexion.add(listeBavardsComboBox, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.EAST;
-        connexion.add(new JLabel("Connecté : "), gbc);
-
-        JRadioButton connexionOuiButton = new JRadioButton("Oui");
-        JRadioButton connexionNonButton = new JRadioButton("Non");
-        ButtonGroup connexionGroup = new ButtonGroup();
-        connexionGroup.add(connexionOuiButton);
-        connexionGroup.add(connexionNonButton);
-
-        // Créer un JPanel séparé pour les JRadioButtons
-        JPanel connexionRadioPanel = new JPanel();
-        connexionRadioPanel.setLayout(new BoxLayout(connexionRadioPanel, BoxLayout.X_AXIS));
-        connexionRadioPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        connexionOuiButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        connexionNonButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        connexionRadioPanel.add(connexionOuiButton);
-        connexionRadioPanel.add(connexionNonButton);
-
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        connexion.add(connexionRadioPanel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        JButton connexionActualisationBtn = new JButton("Mettre à jour");
-        connexion.add(connexionActualisationBtn, gbc);
-
-        // Ajouter un écouteur d'événements au bouton pour mettre à jour le fait d'être connecté
-        connexionActualisationBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent arg0) {
-                // Récup nom du bavard
-                String nomBavard = (String) listeBavardsComboBox.getSelectedItem(); 
-                
-                // Récup interet du bavard
-                boolean connexionChoisi = true;
-                if (connexionNonButton.isSelected()) {
-                    connexionChoisi = false;
-                } 
-                
-                for (Bavard personne : baraque.listBavards) {
-                    if (personne.getNom() == nomBavard) {
-                        personne.setConnecte(connexionChoisi);
-                        JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
-                    }
-                }
-                
-            }
-        });
-
-
-
-        // Définir la taille maximale des cases du GridBagLayout
-        Dimension connexionMaxSize = new Dimension(200, 30);
-        for (Component component : connexion.getComponents()) { // Utiliser connexion au lieu de creation
-            component.setMaximumSize(connexionMaxSize);
-        }
-
-
-//----------------------------------------------------------------------------------//
-//                                                                                  //
-//                                                                                  //
-//                                                                                  //
 //                                 ONGLET BAVARD                                    //
 //                                                                                  //
 //                                                                                  //
@@ -226,6 +127,12 @@ public class MyFrame extends JFrame {
         // Ajout composant pour onglet bavard
         bavard.setLayout(new GridBagLayout());
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        bavard.add(new JLabel("Interface "), gbc);  
+
         // Creer une liste des bavards connectés
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
         for (Bavard unBavard : baraque.listBavards) {
@@ -233,9 +140,15 @@ public class MyFrame extends JFrame {
                 listeBavardsConnecte.add(unBavard.getNom());
             }
         }
-        JComboBox<String> listeBavardsConnecteComboBox = new JComboBox<>(listeBavardsConnecte.toArray(new String[0]));
+        //listeBavardsConnecteComboBox = new JComboBox<>(listeBavardsConnecte.toArray(new String[0]));
 
-        gbc.gridx = 0;
+        //Créer un DefaultComboBoxModel avec la liste des bavards connectés
+        DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>(listeBavardsConnecte.toArray(new String[0]));
+
+        // Créer la JComboBox avec le DefaultComboBoxModel
+        JComboBox<String> listeBavardsConnecteComboBox = new JComboBox<>(comboBoxModel);
+
+        gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -340,6 +253,121 @@ public class MyFrame extends JFrame {
                 //JOptionPane.showMessageDialog(null," créé avec succès");
             }
         });
+        
+//----------------------------------------------------------------------------------//
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//                                 ONGLET CONNEXION                                 //
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//----------------------------------------------------------------------------------//
+        // Ajout composant pour onglet connexion
+        connexion.setLayout(new GridBagLayout());
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+        connexion.add(new JLabel("Liste des bavards : "), gbc);
+
+        //Créer du menu déroulant avec tous les bavards
+        ArrayList<String> bavardsListe = new ArrayList<>();
+        for (Bavard personne : baraque.listBavards) {
+            bavardsListe.add(personne.getNom());
+        }
+        JComboBox<String> listeBavardsComboBox = new JComboBox<>(bavardsListe.toArray(new String[0]));
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        connexion.add(listeBavardsComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        connexion.add(new JLabel("Connecté : "), gbc);
+
+        JRadioButton connexionOuiButton = new JRadioButton("Oui");
+        JRadioButton connexionNonButton = new JRadioButton("Non");
+        ButtonGroup connexionGroup = new ButtonGroup();
+        connexionGroup.add(connexionOuiButton);
+        connexionGroup.add(connexionNonButton);
+
+        // Créer un JPanel séparé pour les JRadioButtons
+        JPanel connexionRadioPanel = new JPanel();
+        connexionRadioPanel.setLayout(new BoxLayout(connexionRadioPanel, BoxLayout.X_AXIS));
+        connexionRadioPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionOuiButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionNonButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionRadioPanel.add(connexionOuiButton);
+        connexionRadioPanel.add(connexionNonButton);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        connexion.add(connexionRadioPanel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        JButton connexionActualisationBtn = new JButton("Mettre à jour");
+        connexion.add(connexionActualisationBtn, gbc);
+
+        // Ajouter un écouteur d'événements au bouton pour mettre à jour le fait d'être connecté
+        connexionActualisationBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent arg0) {
+                // Récup nom du bavard
+                String nomBavard = (String) listeBavardsComboBox.getSelectedItem(); 
+                
+                // Récup interet du bavard
+                boolean connexionChoisi = true;
+                if (connexionNonButton.isSelected()) {
+                    connexionChoisi = false;
+                } 
+                
+                for (Bavard personne : baraque.listBavards) {
+                    if (personne.getNom() == nomBavard) {
+                        personne.setConnecte(connexionChoisi);
+                        JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
+                    }
+                }
+
+                // Créer une nouvelle liste des bavards connectés
+                ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.isConnecte()) {
+                        nouvelleListeBavardsConnecte.add(unBavard.getNom());
+                    }
+                }
+                // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards connectés
+                DefaultComboBoxModel<String> nouveauComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavardsConnecte.toArray(new String[0]));
+                // Définir le nouveau DefaultComboBoxModel sur la JComboBox
+                listeBavardsConnecteComboBox.setModel(nouveauComboBoxModel);
+            }   
+        });
+        
+
+
+
+        // Définir la taille maximale des cases du GridBagLayout
+        Dimension connexionMaxSize = new Dimension(200, 30);
+        for (Component component : connexion.getComponents()) { // Utiliser connexion au lieu de creation
+            component.setMaximumSize(connexionMaxSize);
+        }
+
+
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
@@ -439,8 +467,8 @@ public class MyFrame extends JFrame {
 
         // Ajouter les onglets au JTabbedPane
         tabbedPane.addTab("Creation", creation);
-        tabbedPane.addTab("Connexion", connexion);
         tabbedPane.addTab("Bavard", bavard);
+        tabbedPane.addTab("Connexion", connexion);
         tabbedPane.addTab("Concierge", concierge);
     
 
