@@ -196,15 +196,29 @@ public class MyFrame extends JFrame {
         // Ajout composant pour onglet bavard
         bavard.setLayout(new GridBagLayout());
 
+        // Creer une liste des bavards connectés
+        ArrayList<String> listeBavardsConnecte = new ArrayList<>();
+        for (Bavard unBavard : baraque.listBavards) {
+            if (unBavard.connecte == true) {
+                listeBavardsConnecte.add(unBavard.getNom());
+            }
+        }
+        JComboBox<String> listeBavardsConnecteComboBox = new JComboBox<>(listeBavardsConnecte.toArray(new String[0]));
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        bavard.add(listeBavardsConnecteComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
         bavard.add(new JLabel("Sujet : "), gbc);       
 
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         bavard.add(new JTextField(10), gbc);
@@ -212,9 +226,10 @@ public class MyFrame extends JFrame {
         JPanel bavardContenuEnvoiPanel = new JPanel();
         bavardContenuEnvoiPanel.setLayout(new GridLayout(2,1));
         bavardContenuEnvoiPanel.add(new JLabel("Contenu : "));
-        bavardContenuEnvoiPanel.add(new JButton("Envoyer"));
+        JButton BavardSendBtn = new JButton("Envoyer");
+        bavardContenuEnvoiPanel.add(BavardSendBtn);
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         bavard.add(bavardContenuEnvoiPanel,gbc);
@@ -224,7 +239,7 @@ public class MyFrame extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2; // Occupe 2 colonnes
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0;
@@ -248,7 +263,7 @@ public class MyFrame extends JFrame {
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1; // Occupe 1 colonnes
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
@@ -270,7 +285,7 @@ public class MyFrame extends JFrame {
         bavardReadScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2; // Occupe 2 colonnes
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 5.0;
@@ -283,6 +298,18 @@ public class MyFrame extends JFrame {
             component.setMaximumSize(bavardMaxSize);
         }
 
+
+        // Ajouter un écouteur d'événements au bouton pour envoyer un message
+        BavardSendBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent arg0) {
+                // Récup nom du bavard
+                //String nomBavard = creationNomBavard.getText(); 
+                System.out.println("ca marche");
+                
+                //JOptionPane.showMessageDialog(null," créé avec succès");
+            }
+        });
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
