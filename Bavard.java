@@ -2,6 +2,7 @@ public class Bavard implements PapotageListener{
     protected String nom;
     protected Batiment batiment;
     protected boolean interet;
+    protected boolean connecte;
 
     // Constructeurs
     public Bavard(String nom, Batiment unBatiment) {
@@ -14,6 +15,14 @@ public class Bavard implements PapotageListener{
         this.nom = nom;
         this.batiment = unBatiment;
         this.interet = unInteret;
+        this.connecte = true;
+    }
+
+    public Bavard(String nom, Batiment unBatiment, boolean unInteret, boolean connecte) {
+        this.nom = nom;
+        this.batiment = unBatiment;
+        this.interet = unInteret;
+        this.connecte = connecte;
     }
 
     public void sendPotin(String unSujet, String unCorps) {
