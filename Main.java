@@ -53,10 +53,10 @@ public class Main {
     iut.addBavard(mathie);
     //System.out.println(iut.listBavards);
 
-    charlott.sendPotin("je sus un sujet", "ut la mif");
-    charlott.sendPotin("oksur", "j'ai besoi'aide");
-    charlott.sendPotin("ae", "je fs une ");
-    charlott.sendPotin("rp", "jvais pasinir annee");
+    //charlott.sendPotin("je sus un sujet", "ut la mif");
+    //charlott.sendPotin("oksur", "j'ai besoi'aide");
+    //charlott.sendPotin("ae", "je fs une ");
+    //charlott.sendPotin("rp", "jvais pasinir annee");
     // un paramètre dans la generation de la fenetre qui sera le batiment associé
     // donc une fenetre par batiment 
     MyFrame autreFrame = new MyFrame(iut);
