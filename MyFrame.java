@@ -283,14 +283,39 @@ public class MyFrame extends JFrame {
                         }
                     }
                 }
-                //System.out.println("changement de bavard courant");
                 // Définir le nouveau DefaultListModel sur la JList
                 bavardSubjectList.setModel(currentNewBavardSubjectsModel);
                 //JOptionPane.showMessageDialog(null," créé avec succès");
                 bavardSubjectList.repaint();
 
-
+                // MAJ des logs de connexion
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                        for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
+                            newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                            System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                        }
+                    }
+                }
+                // Définir le nouveau DefaultListModel sur la JList
+                logConnexionList.setModel(newLogConnexionListModel);
                 
+
+                // MAJ des logs de déconnexion
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                        for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
+                            newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                            System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                        }
+                    }
+                }
+                // Définir le nouveau DefaultListModel sur la JList
+                logDeconnexionList.setModel(newLogDeconnexionListModel);
             }
         });
 
@@ -316,6 +341,8 @@ public class MyFrame extends JFrame {
                         }
                     }
                 }
+
+                
             }
         });
 
@@ -382,13 +409,10 @@ public class MyFrame extends JFrame {
                 // MAJ des sujets de l'onglet concierge
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom() == nomBavardConnecte) {
-                        for (PapotageEvent potin : unBavard.listPapotages) {
-                            newConciergeSubjectsModel.addElement(potin.sujet);
-                        }
-                    }
+                for (PapotageEvent potin : baraque.concierge.listPapotages) {
+                    newConciergeSubjectsModel.addElement(potin.sujet);
                 }
+                    
 
                 // Définir le nouveau DefaultListModel sur la JList
                 conciergeSubjectList.setModel(newConciergeSubjectsModel);
@@ -528,20 +552,18 @@ public class MyFrame extends JFrame {
                 } 
                 
                 // Changement de la connexion
-                for (Bavard personne : baraque.listBavards) {
-                    if (personne.getNom().equals(nomBavard)) {
-                        personne.setConnecte(connexionChoisi);
+                for (Bavard personneConnexion : baraque.listBavards) {
+                    if (personneConnexion.getNom().equals(nomBavard)) {
+                        personneConnexion.setConnecte(connexionChoisi);
                         JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
 
                         // Diffusion du signal de connexion à tous les bavards
                         if (connexionChoisi) {
-                            for (Bavard unBavard : baraque.listBavards) {
-                                personne.signalConnexion(unBavard);
-                            }
+                            //System.out.println(personneConnexion.getNom() +" signal sa connexion à "+unBavard.getNom());
+                            personneConnexion.signalConnexion();
                         } else {
-                            for (Bavard unBavard : baraque.listBavards) {
-                                personne.signalDeconnexion(unBavard);
-                            }
+                            personneConnexion.signalDeconnexion();
+                            
                         }
                     }
                 }
@@ -560,6 +582,7 @@ public class MyFrame extends JFrame {
                 // Définir le nouveau DefaultComboBoxModel sur la JComboBox
                 listeBavardsConnecteComboBox.setModel(nouveauComboBoxModel);
 
+                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
 
                 // MAJ des logs de connexion
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
@@ -567,13 +590,30 @@ public class MyFrame extends JFrame {
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom().equals(nomBavardConnecte)) {
                         for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
-                            newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.currentTime);
+                            newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                            System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
                         }
                     }
                 }
 
                 // Définir le nouveau DefaultListModel sur la JList
                 logConnexionList.setModel(newLogConnexionListModel);
+
+
+                // MAJ des logs de déconnexion
+                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
+                for (Bavard unBavard : baraque.listBavards) {
+                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                        for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
+                            newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                            System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                        }
+                    }
+                }
+
+                // Définir le nouveau DefaultListModel sur la JList
+                logDeconnexionList.setModel(newLogDeconnexionListModel);
             }   
         });
         
@@ -608,7 +648,6 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         concierge.add(new JLabel("Messages reçus : "), gbc);  
 
-        
 
         
         JTextArea conciergeReadTextArea = new JTextArea("initialisation");
@@ -668,7 +707,15 @@ public class MyFrame extends JFrame {
 
 
 
-
+//----------------------------------------------------------------------------------//
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//                                                                                  //
+//----------------------------------------------------------------------------------//
 
         // Ajouter les onglets au JTabbedPane
         tabbedPane.addTab("Creation", creation);
