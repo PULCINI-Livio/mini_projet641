@@ -331,13 +331,20 @@ public class MyFrame extends JFrame {
         bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                // Recup bavard courant
+                String personneCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
                 if (!e.getValueIsAdjusting()) {
+                    
                     String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
                     // Affichage du message dans la zone dédiée en fonction du bavard courant
                     for (Bavard unBavard : baraque.listBavards) {
-                        if (unBavard.getNom() == personneCourant) {
+                        System.out.println(unBavard.getNom());
+                        System.out.println(personneCourant);
+                        if (unBavard.getNom().equals(personneCourant)) {
+                            
                             for (PapotageEvent potin : unBavard.listPapotages) {
                                 if (potin.sujet == bavardSelectedSubject) {
+                                    
                                     bavardReadTextArea.setText(potin.corps);
                                 }
                             }
