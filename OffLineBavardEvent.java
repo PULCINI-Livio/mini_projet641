@@ -11,4 +11,20 @@ public class OffLineBavardEvent extends EventObject{
         this.envoyeur = unEnvoyeur;
     }
 
+    public LocalTime getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(LocalTime currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public Bavard getEnvoyeur() {
+        return envoyeur;
+    }
+
+    public void setEnvoyeur(Bavard envoyeur) {
+        this.envoyeur = envoyeur;
+    }
+
 }

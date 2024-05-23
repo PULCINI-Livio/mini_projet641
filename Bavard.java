@@ -46,20 +46,48 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         batiment.concierge.papotageEventReceived(potin);
     }
 
-    public void signalConnexion(Bavard unBavard) {
-        OnLineBavardEvent event = new OnLineBavardEvent(this, unBavard);
+    public void signalConnexion() {
+        OnLineBavardEvent event = new OnLineBavardEvent(this, this);
+        System.out.println("Connexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
         for (Bavard unePersonne : batiment.listBavards) {
-            unePersonne.OnLineBavardEventReceived(event);
+            if (unePersonne.getNom() != this.getNom() && unePersonne.isConnecte()) {
+                unePersonne.OnLineBavardEventReceived(event);
+            }
         }
     }
 
-    public void signalDeconnexion(Bavard unBavard) {
-        OffLineBavardEvent event = new OffLineBavardEvent(this, unBavard);
+    public void signalDeconnexion() {
+        OffLineBavardEvent event = new OffLineBavardEvent(this, this);
+        System.out.println("Déonnexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
         for (Bavard unePersonne : batiment.listBavards) {
-            unePersonne.OffLineBavardEventReceived(event);
+            if (unePersonne.getNom() != this.getNom() && unePersonne.isConnecte()) {
+                unePersonne.OffLineBavardEventReceived(event);
+            }
         }
     }
 
+    @Override
+    public void papotageEventReceived(PapotageEvent event) {
+        System.out.println(nom + " a reçu un message : " + event.corps);
+        if (interet) {
+            listPapotages.add(event);
+        }
+    }
+
+    @Override
+    public void OnLineBavardEventReceived(OnLineBavardEvent event) {
+        listOnLine.add(event);
+        System.out.println(this.getNom()+" a vu la connexion de "+ event.envoyeur.getNom());
+        
+    }
+
+    @Override
+    public void OffLineBavardEventReceived(OffLineBavardEvent event) {
+        listOffLine.add(event);
+        System.out.println(this.getNom()+" a vu la déconnexion de "+ event.envoyeur.getNom());
+
+    }
+    
     public String getNom() {
         return nom;
     }
@@ -91,26 +119,4 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         }
         System.out.println("voila tous les papotages");
     }
-    @Override
-    public void papotageEventReceived(PapotageEvent event) {
-        System.out.println(nom + " a reçu un message : " + event.corps);
-        if (interet) {
-            listPapotages.add(event);
-        }
-    }
-
-    @Override
-    public void OnLineBavardEventReceived(OnLineBavardEvent event) {
-        if (connecte) {
-            listOnLine.add(event);
-        }
-    }
-
-    @Override
-    public void OffLineBavardEventReceived(OffLineBavardEvent event) {
-        if (connecte) {
-            listOffLine.add(event);
-        }
-    }
-    
 }
