@@ -526,11 +526,24 @@ public class MyFrame extends JFrame {
                 } 
                 
                 for (Bavard personne : baraque.listBavards) {
-                    if (personne.getNom() == nomBavard) {
+                    if (personne.getNom().equals(nomBavard)) {
                         personne.setConnecte(connexionChoisi);
                         JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
+
+                        // Diffusion du signal de connexion à tous les bavards
+                        if (connexionChoisi) {
+                            for (Bavard unBavard : baraque.listBavards) {
+                                personne.signalConnexion(unBavard);
+                            }
+                        } else {
+                            for (Bavard unBavard : baraque.listBavards) {
+                                personne.signalDeconnexion(unBavard);
+                            }
+                        }
                     }
                 }
+
+
 
                 // Créer une nouvelle liste des bavards connectés
                 ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
