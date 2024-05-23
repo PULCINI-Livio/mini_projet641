@@ -58,7 +58,7 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
 
     public void signalDeconnexion() {
         OffLineBavardEvent event = new OffLineBavardEvent(this, this);
-        System.out.println("Déonnexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
+        System.out.println("Déconnexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
         for (Bavard unePersonne : batiment.listBavards) {
             if (unePersonne.getNom() != this.getNom() && unePersonne.isConnecte()) {
                 unePersonne.OffLineBavardEventReceived(event);
