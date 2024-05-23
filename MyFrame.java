@@ -343,12 +343,14 @@ public class MyFrame extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
                 // Récup nom du bavard
-                System.out.println("ca marche");
+                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                //System.out.println("ca marche");
 
                 // Envoie du msg par le bavard courant au concierge
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom() == nomBavardConnecte) {
                         unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
+                        //System.out.println("msg envoyé au concierge");
                     }
                 }
 
@@ -361,7 +363,7 @@ public class MyFrame extends JFrame {
                 }
 
                 
-                // MAJ des sujets
+                // MAJ des sujets de l'onglet bavard
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
@@ -377,7 +379,7 @@ public class MyFrame extends JFrame {
                 //JOptionPane.showMessageDialog(null," créé avec succès");
 
 
-                // MAJ des sujets
+                // MAJ des sujets de l'onglet concierge
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
@@ -525,6 +527,7 @@ public class MyFrame extends JFrame {
                     connexionChoisi = false;
                 } 
                 
+                // Changement de la connexion
                 for (Bavard personne : baraque.listBavards) {
                     if (personne.getNom().equals(nomBavard)) {
                         personne.setConnecte(connexionChoisi);
