@@ -14,6 +14,7 @@ public class MyFrame extends JFrame {
     protected JList<String> logConnexionList;
     protected JList<String> logDeconnexionList;
 
+    // Constructeur
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
         initComponents();
@@ -28,17 +29,24 @@ public class MyFrame extends JFrame {
         JPanel bavard = new JPanel();
         JPanel concierge = new JPanel();
     
-//----------------------------------------------------------------------------------//
-//                                                                                   //
-//                                                                                  //
-//                                                                                   //
-//                                INITITIALISATION                                  //
-//                                                                                   //
-//                                                                                  //
-//                                                                                   //
-//----------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------//
+    //                                                                                   //
+    //                                                                                  //
+    //                                                                                   //
+    //                                INITIALISATION                                    //
+    //                                                                                   //
+    //                                                                                  //
+    //                                                                                   //
+    //----------------------------------------------------------------------------------//
 
-        // Liste des bavards connectés dans onglet bavard
+    // Init des listes dynamiques
+        conciergeSubjectList = new JList<>();
+        listeBavardsComboBox = new JComboBox<>();
+        bavardSubjectList = new JList<>();
+        logConnexionList = new JList<>();
+        logDeconnexionList = new JList<>();
+
+    // Liste des bavards connectés dans onglet bavard
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
         for (Bavard unBavard : baraque.listBavards) {
             if (unBavard.connecte == true) {
@@ -46,22 +54,20 @@ public class MyFrame extends JFrame {
             }
         }
 
-        // Liste avec tous les bavards de l'onglet connexion
+    // Liste avec tous les bavards de l'onglet connexion
         ArrayList<String> bavardsListe = new ArrayList<>();
         for (Bavard personne : baraque.listBavards) {
             bavardsListe.add(personne.getNom());
         }
 
-        // Creer une liste des messages que le concierge reçoit dans l'onglet concierge
+    // Liste des messages que le concierge reçoit dans l'onglet concierge
         ArrayList<String> conciergeSubjects = new ArrayList<>();
         for (PapotageEvent potin : baraque.concierge.listPapotages) {
             conciergeSubjects.add(potin.sujet);
         }
-        conciergeSubjectList = new JList<>();
-        listeBavardsComboBox = new JComboBox<>();
-        bavardSubjectList = new JList<>();
-        logConnexionList = new JList<>();
-        logDeconnexionList = new JList<>();
+
+
+        
 //----------------------------------------------------------------------------------//
 //                                                                                 //
 //                                                                                  //
@@ -71,16 +77,18 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                 //
 //----------------------------------------------------------------------------------//
-        // Ajout composants pour onglet creation
+// Ajout composants pour onglet creation
         creation.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
+    // Placement JLabel("Nom du bavard")
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.EAST;
         creation.add(new JLabel("Nom du bavard : "), gbc);
 
+    // Placement JTextField pour entrer le nom du bavard à créer
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -88,12 +96,14 @@ public class MyFrame extends JFrame {
         JTextField creationNomBavard = new JTextField(10);
         creation.add(creationNomBavard, gbc);
 
+    // Placement JLabel("Interet")
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         creation.add(new JLabel("Interet :"), gbc);
 
+    //  Création et ajout des deux JRadioButton OUI/NON dans un groupe
         JRadioButton creationOuiButton = new JRadioButton("Oui");
         JRadioButton creationNonButton = new JRadioButton("Non");
         ButtonGroup creationRadioBtnGroup = new ButtonGroup();
@@ -108,6 +118,7 @@ public class MyFrame extends JFrame {
         creationRadioPanel.add(creationOuiButton);
         creationRadioPanel.add(creationNonButton);
 
+        // Placement du JPanel des JRadioButtons dans la frame
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
@@ -115,6 +126,7 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         creation.add(creationRadioPanel, gbc);
 
+        // Placement du bouton de création
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
@@ -123,13 +135,8 @@ public class MyFrame extends JFrame {
         JButton creationBavardBtn = new JButton("Créer");
         creation.add(creationBavardBtn, gbc);
 
-        // Définir la taille maximale des cases du GridBagLayout de creation
-        Dimension creationMaxSize = new Dimension(200, 30);
-        for (Component component : creation.getComponents()) {
-            component.setMaximumSize(creationMaxSize);
-        }
-/////////////////////////////////////////////////////////////////////////////////////////////////////:
-        // Ajouter un écouteur d'événements au bouton pour créer des bavards
+
+// Ajouter un écouteur d'événements au bouton de création des bavards
         creationBavardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
@@ -142,25 +149,21 @@ public class MyFrame extends JFrame {
                     interetChoisi = false;
                 } 
                 
-                // MAJ des entités liés à la création d'un bavard
+        // MAJ des entités liés à la création d'un bavard
+            // Création et ajout du bavard dans la liste de bavards du batiment
                 baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
                 JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
 
-                // MAJ dans la comboBox de l'onglet connexion
-
+            // MAJ dans la JComboBox contenant la liste de tous les bavards de l'onglet connexion
                 // Créer une nouvelle liste des bavards 
                 ArrayList<String> nouvelleListeBavards = new ArrayList<>();
                 for (Bavard unBavard : baraque.listBavards) {
                     nouvelleListeBavards.add(unBavard.getNom());
                 }
-                //System.out.println(nouvelleListeBavards.get(nouvelleListeBavards.size()-1));;
                 // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards 
                 DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
                 // Définir le nouveau DefaultComboBoxModel sur la JComboBox
                 listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
-
-                // Redessiner la JComboBox
-                //listeBavardsComboBox.repaint();
             }
         });
         
@@ -174,21 +177,23 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                  //
 //----------------------------------------------------------------------------------//
-        // Ajout composant pour onglet bavard
+// Ajout composant pour onglet bavard
         bavard.setLayout(new GridBagLayout());
 
+        // Placement JLabel("Bavards connectés : ")
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
         bavard.add(new JLabel("Bavards connectés : "), gbc);  
 
-        
-        //Créer un DefaultComboBoxModel avec la liste des bavards connectés
+    // Ajout JCombobox contenant la liste des bavards connectés dans l'onglet bavard
+        //Créer un DefaultComboBoxModel avec la liste des bavards connectés initié dans // INITIALISATION //
         DefaultComboBoxModel<String> listeBavardsConnecteComboBoxModel = new DefaultComboBoxModel<>(listeBavardsConnecte.toArray(new String[0]));
         // Créer la JComboBox avec le DefaultComboBoxModel
         listeBavardsConnecteComboBox = new JComboBox<>();
         listeBavardsConnecteComboBox.setModel(listeBavardsConnecteComboBoxModel);
+        // Placement de la JCombobox
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -196,12 +201,14 @@ public class MyFrame extends JFrame {
         gbc.gridwidth = 2; // Occupe 2 colonnes
         bavard.add(listeBavardsConnecteComboBox, gbc);
 
+    // Placement JLabel("Sujet : ")
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.WEST;
         bavard.add(new JLabel("Sujet : "), gbc);       
 
+    // Placement JTextField contenant le sujet que le bavards souhaite envoyer
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -210,18 +217,21 @@ public class MyFrame extends JFrame {
         JTextField bavardSujetEnvoye = new JTextField(10);
         bavard.add(bavardSujetEnvoye, gbc);
 
+    // Création du JPanel qui contient le JLabel("Contenu : ") et le bouton pour envoyer le message
         JPanel bavardContenuEnvoiPanel = new JPanel();
         bavardContenuEnvoiPanel.setLayout(new GridLayout(2,1));
         
         bavardContenuEnvoiPanel.add(new JLabel("Contenu : "));
         JButton BavardSendBtn = new JButton("Envoyer");
         bavardContenuEnvoiPanel.add(BavardSendBtn);
+        // Placement du JPanel
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         bavard.add(bavardContenuEnvoiPanel,gbc);
 
+    // Création et placement du JTextArea qui contient le corps du message
         JTextArea persoTextArea = new JTextArea(10, 20); // 10 lignes de hauteur et 20 colonnes de largeur
         JScrollPane scrollPane = new JScrollPane(persoTextArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -234,29 +244,29 @@ public class MyFrame extends JFrame {
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         bavard.add(scrollPane, gbc);
 
-        // Creer une liste des messages que le bavard reçoit
+    // Creer une liste de sujets des messages que le bavard reçoit
         DefaultListModel<String> bavardSubjectsModel = new DefaultListModel<>();
-        String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+        String personneCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
         for (Bavard unBavard : baraque.listBavards) {
-            if (unBavard.getNom() == nomBavardConnecte) {
+            if (unBavard.getNom() == personneCourant) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses sujets
                 for (PapotageEvent potin : unBavard.listPapotages) {
                     bavardSubjectsModel.addElement(potin.sujet);
                 }
             }
         }
-
-        String bavardLabelText = "Beaucoup de texte ici...\n"; // Ajoutez autant de texte que vous le souhaitez
+    // Texte de base dans les messages qui seront visualisés
+        String bavardLabelText = "Beaucoup de texte ici...\n"; 
         bavardLabelText += "Ce texte peut s'étendre sur plusieurs lignes et nécessiter une barre de défilement.";
-
+        // Ajout de la JTextArea pour visualiser les messages reçu
         JTextArea bavardReadTextArea = new JTextArea(bavardLabelText);
         bavardReadTextArea.setEditable(false); // Désactive l'édition du texte
         bavardReadTextArea.setLineWrap(true); // Active le retour à la ligne automatique
         bavardReadTextArea.setWrapStyleWord(true); // Active le retour à la ligne au niveau des mots
-
+        // Ajout de la JTextArea non editable equipé barre de défilement si le message est trop long
         JScrollPane bavardReadScrollPane = new JScrollPane(bavardReadTextArea);
         bavardReadScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         bavardReadScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+        // Placement de la ScrollPane
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.gridwidth = 2; // Occupe 2 colonnes
@@ -266,36 +276,32 @@ public class MyFrame extends JFrame {
         bavard.add(bavardReadScrollPane, gbc);
 
         
-        // Quand on change de bavard courant
+    // Quand on change de bavard courant avec la combobox
         listeBavardsConnecteComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                // MAJ des sujets
+            // MAJ de la liste des sujets
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets du bavard courant
                 DefaultListModel<String> currentNewBavardSubjectsModel = new DefaultListModel<>();
-                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+                String personneCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(nomBavardConnecte)) {
-                        //System.out.println(unBavard.getNom());
+                    if (unBavard.getNom().equals(personneCourant)) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses propres sujets
                         for (PapotageEvent potin : unBavard.listPapotages) {
-                            //System.out.println(potin.sujet);
                             currentNewBavardSubjectsModel.addElement(potin.sujet);
                         }
                     }
                 }
                 // Définir le nouveau DefaultListModel sur la JList
                 bavardSubjectList.setModel(currentNewBavardSubjectsModel);
-                //JOptionPane.showMessageDialog(null," créé avec succès");
-                bavardSubjectList.repaint();
 
-                // MAJ des logs de connexion
+            // MAJ des logs de connexion
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
                 DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                    if (unBavard.getNom().equals(personneCourant)) {
                         for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
                             newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
-                            System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                            //System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
                         }
                     }
                 }
@@ -303,14 +309,14 @@ public class MyFrame extends JFrame {
                 logConnexionList.setModel(newLogConnexionListModel);
                 
 
-                // MAJ des logs de déconnexion
+            // MAJ des logs de déconnexion
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
                 DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                    if (unBavard.getNom().equals(personneCourant)) {
                         for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
                             newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
-                            System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                            //System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
                         }
                     }
                 }
@@ -319,9 +325,7 @@ public class MyFrame extends JFrame {
             }
         });
 
-        // Quand on sélectionne un sujet
-
-        // créer une JList à partir de l'ArrayList
+    // Quand on sélectionne un sujet dans la liste des sujets
         bavardSubjectList.setModel(bavardSubjectsModel);
         bavardSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         bavardSubjectList.addListSelectionListener(new ListSelectionListener() {
@@ -329,10 +333,9 @@ public class MyFrame extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
-                    System.out.println("Sujet sélectionné : " + bavardSelectedSubject);
-                    
+                    // Affichage du message dans la zone dédiée en fonction du bavard courant
                     for (Bavard unBavard : baraque.listBavards) {
-                        if (unBavard.getNom() == nomBavardConnecte) {
+                        if (unBavard.getNom() == personneCourant) {
                             for (PapotageEvent potin : unBavard.listPapotages) {
                                 if (potin.sujet == bavardSelectedSubject) {
                                     bavardReadTextArea.setText(potin.corps);
@@ -345,7 +348,7 @@ public class MyFrame extends JFrame {
                 
             }
         });
-
+        // Placement de la zone 
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 1; // Occupe 1 colonnes
@@ -354,47 +357,30 @@ public class MyFrame extends JFrame {
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
         bavard.add(bavardSscrollPane, gbc);
-        
+     
 
-        
-        
-        // Définir la taille maximale des cases du GridBagLayout
-        Dimension bavardMaxSize = new Dimension(200, 30);
-        for (Component component : bavard.getComponents()) { // Utiliser connexion au lieu de creation
-            component.setMaximumSize(bavardMaxSize);
-        }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////:
-        // Ajouter un écouteur d'événements au bouton pour envoyer un message
+// Ajouter un écouteur d'événements au bouton qui envoit un message
         BavardSendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
                 // Récup nom du bavard
-                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem();
-                //System.out.println("ca marche");
+                String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
 
                 // Envoie du msg par le bavard courant au concierge
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom() == nomBavardConnecte) {
+                    if (unBavard.getNom() == nomBavardCourant) {
                         unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
                         //System.out.println("msg envoyé au concierge");
                     }
                 }
 
-                // Créer une nouvelle liste des bavards connecte
-                ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.connecte == true) {
-                        nouvelleListeBavardsConnecte.add(unBavard.getNom());
-                    }
-                }
-
                 
-                // MAJ des sujets de l'onglet bavard
+            // MAJ de la liste des sujets de l'onglet bavard
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom() == nomBavardConnecte) {
+                    if (unBavard.getNom() == nomBavardCourant) {
                         for (PapotageEvent potin : unBavard.listPapotages) {
                             newBavardSubjectsModel.addElement(potin.sujet);
                         }
@@ -403,17 +389,14 @@ public class MyFrame extends JFrame {
 
                 // Définir le nouveau DefaultListModel sur la JList
                 bavardSubjectList.setModel(newBavardSubjectsModel);
-                //JOptionPane.showMessageDialog(null," créé avec succès");
 
-
-                // MAJ des sujets de l'onglet concierge
+            // MAJ de la liste des sujets de l'onglet concierge
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                 DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
                 for (PapotageEvent potin : baraque.concierge.listPapotages) {
                     newConciergeSubjectsModel.addElement(potin.sujet);
                 }
-                    
-
+                   
                 // Définir le nouveau DefaultListModel sur la JList
                 conciergeSubjectList.setModel(newConciergeSubjectsModel);
                 //JOptionPane.showMessageDialog(null," créé avec succès");
@@ -422,31 +405,32 @@ public class MyFrame extends JFrame {
         });
         
 
-        // Partie historique des connexions/deconnexions
-
+// Partie historique des connexions/deconnexions
+    // Placement JLabel("Historique des connexions: ")
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
         bavard.add(new JLabel("Historique des connexions: "), gbc); 
 
+    // Placement JLabel("Historique des déconnexions: ")
         gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.EAST;
         bavard.add(new JLabel("Historique des déconnexions : "), gbc); 
 
-        // Creer une liste des logs de co que reçoivent les bavards connectés
+        // Creer une liste des logs de connexion que reçoivent les bavards connectés
         DefaultListModel<String> logConnexionListModel = new DefaultListModel<>();
         // Définir le premier DefaultListModel sur la JList
         logConnexionList.setModel(logConnexionListModel);
 
-        // Creer une liste des logs de deco que reçoivent les bavards connectés
+        // Creer une liste des logs de déconnexion que reçoivent les bavards connectés
         DefaultListModel<String> logDeconnexionListModel = new DefaultListModel<>();
         // Définir le premier DefaultListModel sur la JList
         logDeconnexionList.setModel(logDeconnexionListModel);
         
-
+    // Placement de la liste de connexion équipé d'une scrollbar
         gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.gridwidth = 1; // Occupe 1 colonnes
@@ -457,6 +441,7 @@ public class MyFrame extends JFrame {
         JScrollPane logConnexionScrollPane = new JScrollPane(logConnexionList);
         bavard.add(logConnexionScrollPane, gbc);
 
+    // Placement de la liste de déconnexion équipé d'une scrollbar
         gbc.gridx = 4;
         gbc.gridy = 1;
         gbc.gridwidth = 5; // Occupe 1 colonnes
@@ -475,9 +460,9 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                  //
 //----------------------------------------------------------------------------------//
-        // Ajout composant pour onglet connexion
+// Ajout composant pour onglet connexion
         connexion.setLayout(new GridBagLayout());
-
+    // Placement JLabel("Liste des bavards : ")
         gbc.gridwidth = 1; // Occupe 1 colonne
         gbc.gridheight = 1; // Occupe 1 ligne
         gbc.gridx = 0;
@@ -492,7 +477,7 @@ public class MyFrame extends JFrame {
         // Créer la JComboBox avec le DefaultComboBoxModel
         listeBavardsComboBox = new JComboBox<>();
         listeBavardsComboBox.setModel(listeBavardsComboBoxModel);
-
+    // Placement de la combobox qui contient la liste complète des bavards
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -501,13 +486,14 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(listeBavardsComboBox, gbc);
 
+    // Placement JLabel("Connecté : ")
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.WEST;
         connexion.add(new JLabel("Connecté : "), gbc);
-
+    // Création et placement des JRadioButton pour choisir si on se connecte ou non
         JRadioButton connexionOuiButton = new JRadioButton("Oui");
         JRadioButton connexionNonButton = new JRadioButton("Non");
         ButtonGroup connexionGroup = new ButtonGroup();
@@ -522,14 +508,14 @@ public class MyFrame extends JFrame {
         connexionNonButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         connexionRadioPanel.add(connexionOuiButton);
         connexionRadioPanel.add(connexionNonButton);
-
+        // Placement des radio button
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(connexionRadioPanel, gbc);
-
+    // Placement du bouton de validation de la connexion/déconnexion
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.NONE;
@@ -538,26 +524,26 @@ public class MyFrame extends JFrame {
         JButton connexionActualisationBtn = new JButton("Mettre à jour");
         connexion.add(connexionActualisationBtn, gbc);
 
-        // Ajouter un écouteur d'événements au bouton pour mettre à jour le fait d'être connecté
+// Ajouter un écouteur d'événements au bouton pour mettre à jour le fait d'être connecté
         connexionActualisationBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
-                // Récup nom du bavard
-                String nomBavard = (String) listeBavardsComboBox.getSelectedItem(); 
+            // Récup nom du bavard
+                String nomBavardAConnecter = (String) listeBavardsComboBox.getSelectedItem(); 
                 
-                // Récup interet du bavard
+            // Récup interet du bavard
                 boolean connexionChoisi = true;
                 if (connexionNonButton.isSelected()) {
                     connexionChoisi = false;
                 } 
                 
-                // Changement de la connexion
+            // Changement de la connexion
                 for (Bavard personneConnexion : baraque.listBavards) {
-                    if (personneConnexion.getNom().equals(nomBavard)) {
+                    if (personneConnexion.getNom().equals(nomBavardAConnecter)) {
                         personneConnexion.setConnecte(connexionChoisi);
-                        JOptionPane.showMessageDialog(null, nomBavard + " a changé sa connexion");
+                        JOptionPane.showMessageDialog(null, nomBavardAConnecter + " a changé sa connexion");
 
-                        // Diffusion du signal de connexion à tous les bavards
+                    // Diffusion du signal de connexion ou deconnexion à tous les bavards
                         if (connexionChoisi) {
                             //System.out.println(personneConnexion.getNom() +" signal sa connexion à "+unBavard.getNom());
                             personneConnexion.signalConnexion();
@@ -570,7 +556,7 @@ public class MyFrame extends JFrame {
 
 
 
-                // Créer une nouvelle liste des bavards connectés
+            // Créer une nouvelle liste des bavards connectés
                 ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.isConnecte()) {
@@ -582,13 +568,13 @@ public class MyFrame extends JFrame {
                 // Définir le nouveau DefaultComboBoxModel sur la JComboBox
                 listeBavardsConnecteComboBox.setModel(nouveauComboBoxModel);
 
-                String nomBavardConnecte = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+                String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
 
-                // MAJ des logs de connexion
+            // MAJ des logs de connexion
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
                 DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                    if (unBavard.getNom().equals(nomBavardCourant)) {
                         for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
                             newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
                             System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
@@ -600,11 +586,11 @@ public class MyFrame extends JFrame {
                 logConnexionList.setModel(newLogConnexionListModel);
 
 
-                // MAJ des logs de déconnexion
+            // MAJ des logs de déconnexion
                 // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
                 DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
                 for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(nomBavardConnecte)) {
+                    if (unBavard.getNom().equals(nomBavardCourant)) {
                         for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
                             newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
                             System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
@@ -618,15 +604,6 @@ public class MyFrame extends JFrame {
         });
         
 
-
-
-        // Définir la taille maximale des cases du GridBagLayout
-        Dimension connexionMaxSize = new Dimension(200, 50);
-        for (Component component : connexion.getComponents()) { // Utiliser connexion au lieu de creation
-            component.setMaximumSize(connexionMaxSize);
-        }
-
-
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
@@ -636,10 +613,10 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //                                                                                  //
 //----------------------------------------------------------------------------------//
-        // Ajout composant pour onglet concierge
+// Ajout composant pour onglet concierge
         concierge.setLayout(new GridBagLayout());
 
-
+    // Placement JLabel("Messages reçus : ")
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -649,7 +626,7 @@ public class MyFrame extends JFrame {
         concierge.add(new JLabel("Messages reçus : "), gbc);  
 
 
-        
+    // Creation de la zone de pour visualiser les messages    
         JTextArea conciergeReadTextArea = new JTextArea("initialisation");
 
         // créer une JList à partir de l'ArrayList
@@ -658,6 +635,7 @@ public class MyFrame extends JFrame {
         conciergeSubjectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conciergeSubjectList.addListSelectionListener(new ListSelectionListener() {
             @Override
+            // Quand on clique sur un sujet dans la liste, on met met à jour la zone de visu 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     String selectedSubject = conciergeSubjectList.getSelectedValue();
@@ -671,7 +649,7 @@ public class MyFrame extends JFrame {
                 }
             }
         });
-
+        // On ajoute une scrollbar à la zone de visu 
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1; // Occupe 1 colonnes
@@ -690,7 +668,7 @@ public class MyFrame extends JFrame {
         JScrollPane conciergeReadScrollPane = new JScrollPane(conciergeReadTextArea);
         conciergeReadScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         conciergeReadScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+        // Placement de la zone de visu
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 2; // Occupe 2 colonnes
@@ -699,25 +677,18 @@ public class MyFrame extends JFrame {
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         concierge.add(conciergeReadScrollPane, gbc);
 
-        // Définir la taille maximale des cases du GridBagLayout
-        Dimension conciergeMaxSize = new Dimension(200, 30);
-        for (Component component : concierge.getComponents()) { // Utiliser connexion au lieu de creation
-            component.setMaximumSize(conciergeMaxSize);
-        }
-
-
 
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
 //                                                                                  //
-//                                                                                  //
+//                             PARAMETRAGE FRAME                                    //
 //                                                                                  //
 //                                                                                  //
 //                                                                                  //
 //----------------------------------------------------------------------------------//
 
-        // Ajouter les onglets au JTabbedPane
+    // Ajoute des onglets au JTabbedPane
         tabbedPane.addTab("Creation", creation);
         tabbedPane.addTab("Bavard", bavard);
         tabbedPane.addTab("Connexion", connexion);
@@ -729,7 +700,7 @@ public class MyFrame extends JFrame {
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(baraque.nom);
-        setSize(600, 500);
+        setSize(900, 500);
         setLocationRelativeTo(null);
     }
     
