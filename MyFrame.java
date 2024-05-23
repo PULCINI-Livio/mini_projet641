@@ -136,34 +136,50 @@ public class MyFrame extends JFrame {
         creation.add(creationBavardBtn, gbc);
 
 
+
 // Ajouter un écouteur d'événements au bouton de création des bavards
         creationBavardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
                 // Récup nom du bavard du JTextField
                 String nomBavard = creationNomBavard.getText(); 
-                
-                // Récup interet du bavard du JRadioButton
-                boolean interetChoisi = true;
-                if (creationNonButton.isSelected()) {
-                    interetChoisi = false;
-                } 
-                
-        // MAJ des entités liés à la création d'un bavard
-            // Création et ajout du bavard dans la liste de bavards du batiment
-                baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
-                JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
-
-            // MAJ dans la JComboBox contenant la liste de tous les bavards de l'onglet connexion
-                // Créer une nouvelle liste des bavards 
-                ArrayList<String> nouvelleListeBavards = new ArrayList<>();
+                // On verifie que le nom du bavard n'est pas deja pris
+                boolean existeDeja = false;
                 for (Bavard unBavard : baraque.listBavards) {
-                    nouvelleListeBavards.add(unBavard.getNom());
+                    if (nomBavard.equals(unBavard.getNom()))
+                    existeDeja = true;
                 }
-                // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards 
-                DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
-                // Définir le nouveau DefaultComboBoxModel sur la JComboBox
-                listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
+                // On vérifie que le JTextField contenant le nom du bavard n'est pas vide ou déjà existant
+                if (!creationNomBavard.getText().isEmpty() && !existeDeja) {
+                    // Récup interet du bavard du JRadioButton (si rien n'est selectionné, interet est true)
+                    boolean interetChoisi = true;
+                    if (creationNonButton.isSelected()) {
+                        interetChoisi = false;
+                    } 
+                    
+            // MAJ des entités liés à la création d'un bavard
+                // Création et ajout du bavard dans la liste de bavards du batiment
+                    baraque.addBavard(new Bavard(nomBavard, baraque, interetChoisi));
+                    JOptionPane.showMessageDialog(null, nomBavard + " créé avec succès");
+
+                // MAJ dans la JComboBox contenant la liste de tous les bavards de l'onglet connexion
+                    // Créer une nouvelle liste des bavards 
+                    ArrayList<String> nouvelleListeBavards = new ArrayList<>();
+                    for (Bavard unBavard : baraque.listBavards) {
+                        nouvelleListeBavards.add(unBavard.getNom());
+                    }
+                    // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards 
+                    DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
+                    // Définir le nouveau DefaultComboBoxModel sur la JComboBox
+                    listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
+                } else {
+                    if (creationNomBavard.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null,"Le nom du bavard ne peut pas être vide");
+                    }
+                    if (existeDeja) {
+                        JOptionPane.showMessageDialog(null,"Le nom du bavard est déjà pris");
+                    }
+                }
             }
         });
         

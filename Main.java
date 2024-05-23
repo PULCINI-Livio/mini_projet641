@@ -59,8 +59,8 @@ public class Main {
     //charlott.sendPotin("rp", "jvais pasinir annee");
     // un paramètre dans la generation de la fenetre qui sera le batiment associé
     // donc une fenetre par batiment 
-    //MyFrame autreFrame = new MyFrame(iut);
-    //autreFrame.setVisible(true);
+    MyFrame autreFrame = new MyFrame(iut);
+    autreFrame.setVisible(true);
 
 
     } 
