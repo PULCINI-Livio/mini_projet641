@@ -261,7 +261,7 @@ public class MyFrame extends JFrame {
         gbc.gridwidth = 2; // Occupe 2 colonnes
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0;
-        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        gbc.weighty = 2.0; // Ajoute du poids en hauteur
         bavard.add(scrollPane, gbc);
 
     // Creer une liste de sujets des messages que le bavard reçoit
@@ -270,7 +270,7 @@ public class MyFrame extends JFrame {
         for (Bavard unBavard : baraque.listBavards) {
             if (unBavard.getNom() == personneCourant) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses sujets
                 for (PapotageEvent potin : unBavard.listPapotages) {
-                    bavardSubjectsModel.addElement(potin.sujet);
+                    bavardSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
                 }
             }
         }
@@ -292,7 +292,7 @@ public class MyFrame extends JFrame {
         gbc.gridwidth = 2; // Occupe 2 colonnes
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 5.0;
-        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        gbc.weighty = 2.0; // Ajoute du poids en hauteur
         bavard.add(bavardReadScrollPane, gbc);
 
         
@@ -307,7 +307,7 @@ public class MyFrame extends JFrame {
                 for (Bavard unBavard : baraque.listBavards) {
                     if (unBavard.getNom().equals(personneCourant)) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses propres sujets
                         for (PapotageEvent potin : unBavard.listPapotages) {
-                            currentNewBavardSubjectsModel.addElement(potin.sujet);
+                            currentNewBavardSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
                         }
                     }
                 }
@@ -358,21 +358,21 @@ public class MyFrame extends JFrame {
                     String bavardSelectedSubject = bavardSubjectList.getSelectedValue();
                     // Affichage du message dans la zone dédiée en fonction du bavard courant
                     for (Bavard unBavard : baraque.listBavards) {
-                        System.out.println(unBavard.getNom());
-                        System.out.println(personneCourant);
                         if (unBavard.getNom().equals(personneCourant)) {
-                            
                             for (PapotageEvent potin : unBavard.listPapotages) {
-                                if (potin.sujet == bavardSelectedSubject) {
+                                if ((potin.sujet + " à " + potin.currentTime).equals(bavardSelectedSubject)) {
+                                    //System.out.println(potin.envoyeur.getNom().equals(personneCourant));
+                                    if (potin.envoyeur.getNom().equals(personneCourant)) {// si on regarde notre propre msg
+                                        bavardReadTextArea.setText(potin.corps + "\n de moi");
+                                    } else {
+                                        bavardReadTextArea.setText(potin.corps + "\n de " + potin.envoyeur.getNom());
+                                    }
                                     
-                                    bavardReadTextArea.setText(potin.corps);
                                 }
                             }
                         }
                     }
                 }
-
-                
             }
         });
         // Placement de la zone 
@@ -411,7 +411,7 @@ public class MyFrame extends JFrame {
                     for (Bavard unBavard : baraque.listBavards) {
                         if (unBavard.getNom() == nomBavardCourant) {
                             for (PapotageEvent potin : unBavard.listPapotages) {
-                                newBavardSubjectsModel.addElement(potin.sujet);
+                                newBavardSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
                             }
                         }
                     }
@@ -423,7 +423,7 @@ public class MyFrame extends JFrame {
                     // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
                     DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
                     for (PapotageEvent potin : baraque.concierge.listPapotages) {
-                        newConciergeSubjectsModel.addElement(potin.sujet);
+                        newConciergeSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
                     }
                     
                     // Définir le nouveau DefaultListModel sur la JList
@@ -437,19 +437,22 @@ public class MyFrame extends JFrame {
         
 
 // Partie historique des connexions/deconnexions
+    JPanel bavardPanelLogs = new JPanel(new GridBagLayout());
     // Placement JLabel("Historique des connexions: ")
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
-        bavard.add(new JLabel("Historique des connexions: "), gbc); 
+        bavardPanelLogs.add(new JLabel("Historique des connexions: "), gbc); 
 
     // Placement JLabel("Historique des déconnexions: ")
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        gbc.weightx = 0;
+        gbc.gridx = 3;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
-        bavard.add(new JLabel("Historique des déconnexions : "), gbc); 
+        bavardPanelLogs.add(new JLabel("Historique des déconnexions : "), gbc); 
 
         // Creer une liste des logs de connexion que reçoivent les bavards connectés
         DefaultListModel<String> logConnexionListModel = new DefaultListModel<>();
@@ -464,24 +467,33 @@ public class MyFrame extends JFrame {
     // Placement de la liste de connexion équipé d'une scrollbar
         gbc.gridx = 3;
         gbc.gridy = 1;
-        gbc.gridwidth = 1; // Occupe 1 colonnes
-        gbc.gridheight = 5; // Occupe 3 lignes
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        gbc.weighty = 3.0; 
         JScrollPane logConnexionScrollPane = new JScrollPane(logConnexionList);
-        bavard.add(logConnexionScrollPane, gbc);
+        bavardPanelLogs.add(logConnexionScrollPane, gbc);
 
     // Placement de la liste de déconnexion équipé d'une scrollbar
-        gbc.gridx = 4;
-        gbc.gridy = 1;
-        gbc.gridwidth = 5; // Occupe 1 colonnes
+        gbc.gridx = 3;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.gridheight = 1; // Occupe 1 ligne
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0; // Ajoute du poids en hauteur
+        gbc.weighty = 3.0; 
         JScrollPane logDeconnexionScrollPane = new JScrollPane(logDeconnexionList);
-        bavard.add(logDeconnexionScrollPane, gbc);
-
+        bavardPanelLogs.add(logDeconnexionScrollPane, gbc);
+    // Placement du JPanel des logs dans l'onglet
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.gridheight = 6; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0;
+        gbc.weighty = 0; 
+        bavard.add(bavardPanelLogs, gbc);
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
