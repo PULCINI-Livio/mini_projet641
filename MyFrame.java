@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+
 public class MyFrame extends JFrame {
     protected Batiment baraque;
     protected JComboBox<String> listeBavardsComboBox;
@@ -13,7 +14,8 @@ public class MyFrame extends JFrame {
     protected JComboBox<String> listeBavardsConnecteComboBox;
     protected JList<String> logConnexionList;
     protected JList<String> logDeconnexionList;
-
+    protected JComboBox<String> bavardListeBavardsComboBox;
+    protected JToggleButton switchButton;
     // Constructeur
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
@@ -21,14 +23,15 @@ public class MyFrame extends JFrame {
     }
 
     private void initComponents() {
-        JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane menuTabbedPane = new JTabbedPane();
     
         // Créer des panneaux pour chaque onglet
         JPanel creation = new JPanel();
         JPanel connexion = new JPanel();
         JPanel bavard = new JPanel();
         JPanel concierge = new JPanel();
-    
+        
+
     //----------------------------------------------------------------------------------//
     //                                                                                   //
     //                                                                                  //
@@ -45,7 +48,7 @@ public class MyFrame extends JFrame {
         bavardSubjectList = new JList<>();
         logConnexionList = new JList<>();
         logDeconnexionList = new JList<>();
-
+        bavardListeBavardsComboBox = new JComboBox<>();
     // Liste des bavards connectés dans onglet bavard
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
         for (Bavard unBavard : baraque.listBavards) {
@@ -66,7 +69,12 @@ public class MyFrame extends JFrame {
             conciergeSubjects.add(potin.sujet);
         }
 
+    // Charger les icônes pour les états enfoncé et relâché du bouton switch
+        ImageIcon onIcon = new ImageIcon("switchBlocked.png");
+        ImageIcon offIcon = new ImageIcon("switchUnblocked.png");
 
+    // Créer le bouton switch
+        JToggleButton switchButton = new JToggleButton(offIcon);
         
 //----------------------------------------------------------------------------------//
 //                                                                                 //
@@ -174,6 +182,7 @@ public class MyFrame extends JFrame {
                     DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
                     // Définir le nouveau DefaultComboBoxModel sur la JComboBox
                     listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
+                    bavardListeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
                 } else {
                     if (creationNomBavard.getText().isEmpty()) {
                         JOptionPane.showMessageDialog(null,"Le nom du bavard ne peut pas être vide");
@@ -300,49 +309,72 @@ public class MyFrame extends JFrame {
         listeBavardsConnecteComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-            // MAJ de la liste des sujets
-                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets du bavard courant
-                DefaultListModel<String> currentNewBavardSubjectsModel = new DefaultListModel<>();
-                String personneCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(personneCourant)) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses propres sujets
-                        for (PapotageEvent potin : unBavard.listPapotages) {
-                            currentNewBavardSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
+                // MAJ de la liste des sujets
+                    // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets du bavard courant
+                    DefaultListModel<String> currentNewBavardSubjectsModel = new DefaultListModel<>();
+                    String personneCourant = (String) listeBavardsConnecteComboBox.getSelectedItem(); 
+                    // Récup le bavard connecté
+                    Bavard bavardCourant = null;
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(personneCourant)) {
+                            bavardCourant = unBavard;
                         }
                     }
-                }
-                // Définir le nouveau DefaultListModel sur la JList
-                bavardSubjectList.setModel(currentNewBavardSubjectsModel);
 
-            // MAJ des logs de connexion
-                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
-                DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(personneCourant)) {
-                        for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
-                            newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
-                            //System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(personneCourant)) { // Si le bavard est le bavard courant, on ajoute dans la liste dynamique des sujets ses propres sujets
+                            for (PapotageEvent potin : unBavard.listPapotages) {
+                                currentNewBavardSubjectsModel.addElement(potin.sujet + " à " + potin.currentTime);
+                            }
                         }
                     }
-                }
-                // Définir le nouveau DefaultListModel sur la JList
-                logConnexionList.setModel(newLogConnexionListModel);
-                
+                    // Définir le nouveau DefaultListModel sur la JList
+                    bavardSubjectList.setModel(currentNewBavardSubjectsModel);
 
-            // MAJ des logs de déconnexion
-                // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
-                DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom().equals(personneCourant)) {
-                        for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
-                            newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
-                            //System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                // MAJ des logs de connexion
+                    // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                    DefaultListModel<String> newLogConnexionListModel = new DefaultListModel<>();
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(personneCourant)) {
+                            for (OnLineBavardEvent signalCo : unBavard.listOnLine) {
+                                newLogConnexionListModel.addElement(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                                //System.out.println(signalCo.envoyeur.getNom() + " : " + signalCo.getCurrentTime());
+                            }
                         }
                     }
+                    // Définir le nouveau DefaultListModel sur la JList
+                    logConnexionList.setModel(newLogConnexionListModel);
+                    
+
+                // MAJ des logs de déconnexion
+                    // Créer un nouveau DefaultListModel avec la nouvelle liste des logs
+                    DefaultListModel<String> newLogDeconnexionListModel = new DefaultListModel<>();
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(personneCourant)) {
+                            for (OffLineBavardEvent signalDeco : unBavard.listOffLine) {
+                                newLogDeconnexionListModel.addElement(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                                //System.out.println(signalDeco.envoyeur.getNom() + " : " + signalDeco.getCurrentTime());
+                            }
+                        }
+                    }
+                    // Définir le nouveau DefaultListModel sur la JList
+                    logDeconnexionList.setModel(newLogDeconnexionListModel);
+                // partie blocage
+                    String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
+                    System.out.println(bavardCourant.getNom()+" a t il bloqué "+nomBavardSelected+"? ");
+                    System.out.println(bavardCourant.isBlocked(nomBavardSelected));
+                    // on regarde si le bavard dans la comboBox des bloqués est bloqué par le bavard connecté et on met à jour le switch
+                    
+                    if (bavardCourant.isBlocked(nomBavardSelected)) {
+                        System.out.println("on passe en rouge");
+                        switchButton.setSelected(true);
+                        System.out.println("on est passé en rouge");
+                    } else {
+                        System.out.println("on passe en vert");
+                        switchButton.setSelected(false);
+                        System.out.println("on est passé en vert");
+                    }
                 }
-                // Définir le nouveau DefaultListModel sur la JList
-                logDeconnexionList.setModel(newLogDeconnexionListModel);
-            }
         });
 
     // Quand on sélectionne un sujet dans la liste des sujets
@@ -485,15 +517,126 @@ public class MyFrame extends JFrame {
         gbc.weighty = 3.0; 
         JScrollPane logDeconnexionScrollPane = new JScrollPane(logDeconnexionList);
         bavardPanelLogs.add(logDeconnexionScrollPane, gbc);
-    // Placement du JPanel des logs dans l'onglet
+    // Placement du JPanel des logs dans l'onglet bavard
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.gridwidth = 1; // Occupe 1 colonnes
         gbc.gridheight = 6; // Occupe 1 ligne
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0;
+        gbc.weightx = 1;
         gbc.weighty = 0; 
         bavard.add(bavardPanelLogs, gbc);
+
+
+
+// Partie blocking des bavards
+        JPanel bavardPanelBlock = new JPanel(new GridBagLayout());
+
+
+        // Créer le bouton switch
+        switchButton.setSelectedIcon(onIcon);
+        switchButton.setPreferredSize(new Dimension(80, 30)); // Définir la taille préférée du bouton
+        switchButton.setBorderPainted(false); // Masquer la bordure du bouton
+        switchButton.setFocusPainted(false); // Masquer la bordure de focus du bouton
+
+        // Placement JLabel("Gestionnaire des blocages: ")
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        bavardPanelBlock.add(new JLabel("Gestionnaire des blocages : "), gbc); 
+
+
+        //Créer un DefaultComboBoxModel avec la liste des bavards connectés
+        DefaultComboBoxModel<String> bavardListeBavardsComboBoxModel = new DefaultComboBoxModel<>(bavardsListe.toArray(new String[0]));
+        // Créer la JComboBox avec le DefaultComboBoxModel
+        bavardListeBavardsComboBox = new JComboBox<>();
+        bavardListeBavardsComboBox.setModel(bavardListeBavardsComboBoxModel);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavardPanelBlock.add(bavardListeBavardsComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavardPanelBlock.add(switchButton, gbc);
+
+        // Placement du JPanel du blocking dans l'onglet bavard
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 4; // Occupe 4 lignes
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavard.add(bavardPanelBlock, gbc);
+
+        // Quand on change de bavard à gérer (bloquer/debloquer) avec la combobox
+        bavardListeBavardsComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (listeBavardsConnecteComboBox.getItemCount() != 0){
+                    // Récup nom du bavard pour avoir le bavard connecté
+                    String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                    Bavard bavardCourant = null;
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(nomBavardCourant)) {
+                            bavardCourant = unBavard;
+                        }
+                    }
+                    String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
+                    // on regarde si le bavard est bloqué par le bavard connecté et on met à jour le switch
+                    if (bavardCourant.isBlocked(nomBavardSelected)) {
+                        switchButton.setSelected(true);
+                    } else {
+                        switchButton.setSelected(false);
+                    }
+                }
+            }
+        });
+
+    // quand on clique sur le switch 
+        switchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                // Récup nom du bavard pour avoir le bavard connecté
+                if (listeBavardsConnecteComboBox.getItemCount() != 0){    
+                    String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                    Bavard bavardCourant = null;
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(nomBavardCourant)) {
+                            bavardCourant = unBavard;
+                        }
+                    }
+
+                    String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
+
+                    // Détecter les changements d'état du bouton switch
+                    if (switchButton.isSelected()) {
+                        bavardCourant.bloquer(nomBavardSelected);
+                        System.out.println(nomBavardSelected + "est bloqué");
+                    } else {
+                        bavardCourant.debloquer(nomBavardSelected);
+                        System.out.println(nomBavardSelected + "est débloqué");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Aucun bavard connecté");
+                }
+            }
+
+            
+        });
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
@@ -768,15 +911,15 @@ public class MyFrame extends JFrame {
 //                                                                                  //
 //----------------------------------------------------------------------------------//
 
-    // Ajoute des onglets au JTabbedPane
-        tabbedPane.addTab("Creation", creation);
-        tabbedPane.addTab("Bavard", bavard);
-        tabbedPane.addTab("Connexion", connexion);
-        tabbedPane.addTab("Concierge", concierge);
+    // Ajoute des onglets au JmenuTabbedPane
+        menuTabbedPane.addTab("Creation", creation);
+        menuTabbedPane.addTab("Bavard", bavard);
+        menuTabbedPane.addTab("Connexion", connexion);
+        menuTabbedPane.addTab("Concierge", concierge);
     
 
         // Ajouter le JTabbedPane à la JFrame
-        add(tabbedPane, BorderLayout.CENTER);
+        add(menuTabbedPane, BorderLayout.CENTER);
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(baraque.nom);

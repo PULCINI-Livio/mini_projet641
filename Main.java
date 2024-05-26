@@ -19,6 +19,8 @@ public class Main {
     polytech.addBavard(livio);
     Bavard mathieu = new Bavard("mathieu", polytech, false, false);
     polytech.addBavard(mathieu);
+
+    charlotte.bloquer(mathieu);
     //System.out.println(polytech.listBavards);
 
     //charlotte.sendPotin("je suis un sujet", "salut la mif");
@@ -61,7 +63,6 @@ public class Main {
     // donc une fenetre par batiment 
     //MyFrame autreFrame = new MyFrame(iut);
     //autreFrame.setVisible(true);
-
 
     } 
 }
