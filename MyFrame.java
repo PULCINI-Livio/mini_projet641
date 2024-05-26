@@ -524,7 +524,7 @@ public class MyFrame extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 1.0;
+        gbc.weightx = 3.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.EAST;
         connexion.add(listeBavardsComboBox, gbc);
@@ -557,11 +557,43 @@ public class MyFrame extends JFrame {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
-        gbc.anchor = GridBagConstraints.EAST;
+        gbc.anchor = GridBagConstraints.WEST;
         connexion.add(connexionRadioPanel, gbc);
-    // Placement du bouton de validation de la connexion/déconnexion
+
+        // Placement JLabel("Intérêt : ")
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        connexion.add(new JLabel("Intérêt : "), gbc);
+    // Création et placement des JRadioButton pour choisir si on est intéressé ou non
+        JRadioButton connexionInteretOuiButton = new JRadioButton("Oui");
+        connexionInteretOuiButton.setSelected(true); // Sélectionner le JRadioButton "Oui" par défaut
+        JRadioButton connexionInteretNonButton = new JRadioButton("Non");
+        ButtonGroup connexionInteretGroup = new ButtonGroup();
+        connexionInteretGroup.add(connexionInteretOuiButton);
+        connexionInteretGroup.add(connexionInteretNonButton);
+
+        // Créer un JPanel séparé pour les JRadioButtons
+        JPanel connexionInteretRadioPanel = new JPanel();
+        connexionInteretRadioPanel.setLayout(new BoxLayout(connexionInteretRadioPanel, BoxLayout.X_AXIS));
+        connexionInteretRadioPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionInteretOuiButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionInteretNonButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        connexionInteretRadioPanel.add(connexionInteretOuiButton);
+        connexionInteretRadioPanel.add(connexionInteretNonButton);
+        // Placement des radio button
         gbc.gridx = 1;
         gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        connexion.add(connexionInteretRadioPanel, gbc);
+
+    // Placement du bouton de validation de la connexion/déconnexion et du choix de l'interet
+        gbc.gridx = 1;
+        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -575,16 +607,23 @@ public class MyFrame extends JFrame {
             // Récup nom du bavard
                 String nomBavardAConnecter = (String) listeBavardsComboBox.getSelectedItem(); 
                 
-            // Récup interet du bavard
+            // Récup choix connexion/deconnexion du bavard
                 boolean connexionChoisi = true;
                 if (connexionNonButton.isSelected()) {
                     connexionChoisi = false;
                 } 
                 
+            // Récup choix interet du bavard
+            boolean ineretChoisi = true;
+            if (connexionInteretNonButton.isSelected()) {
+                ineretChoisi = false;
+            } 
+
             // Changement de la connexion
                 for (Bavard personneConnexion : baraque.listBavards) {
                     if (personneConnexion.getNom().equals(nomBavardAConnecter)) {
                         personneConnexion.setConnecte(connexionChoisi);
+                        personneConnexion.setInteret(ineretChoisi);
                         JOptionPane.showMessageDialog(null, nomBavardAConnecter + " a changé sa connexion");
 
                     // Diffusion du signal de connexion ou deconnexion à tous les bavards
@@ -597,8 +636,6 @@ public class MyFrame extends JFrame {
                         }
                     }
                 }
-
-
 
             // Créer une nouvelle liste des bavards connectés
                 ArrayList<String> nouvelleListeBavardsConnecte = new ArrayList<>();
@@ -682,14 +719,13 @@ public class MyFrame extends JFrame {
             // Quand on clique sur un sujet dans la liste, on met met à jour la zone de visu 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    String selectedSubject = conciergeSubjectList.getSelectedValue();
-                    System.out.println("Sujet sélectionné : " + selectedSubject);
+                    String conciergeSelectedSubject = conciergeSubjectList.getSelectedValue();
+                    System.out.println("Sujet sélectionné : " + conciergeSelectedSubject);
                     for (PapotageEvent potin : baraque.concierge.listPapotages) {
-                        if (selectedSubject == potin.sujet) {
-                            conciergeReadTextArea.setText(potin.corps);
+                        if ((potin.sujet + " à " + potin.currentTime).equals(conciergeSelectedSubject)) {
+                            conciergeReadTextArea.setText(potin.corps + "\n de " + potin.envoyeur.getNom());
                         }
-                    }
-                    
+                    } 
                 }
             }
         });
