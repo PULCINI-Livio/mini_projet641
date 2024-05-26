@@ -105,6 +105,8 @@ public class MyFrame extends JFrame {
 
     //  Création et ajout des deux JRadioButton OUI/NON dans un groupe
         JRadioButton creationOuiButton = new JRadioButton("Oui");
+        creationOuiButton.setSelected(true); // Sélectionner le JRadioButton "Oui" par défaut
+
         JRadioButton creationNonButton = new JRadioButton("Non");
         ButtonGroup creationRadioBtnGroup = new ButtonGroup();
         creationRadioBtnGroup.add(creationOuiButton);
@@ -247,11 +249,13 @@ public class MyFrame extends JFrame {
         gbc.weightx = 0.0;
         bavard.add(bavardContenuEnvoiPanel,gbc);
 
-    // Création et placement du JTextArea qui contient le corps du message
+    // Création et placement du JTextArea qui contient le corps du message que le bavard souhaite envoyer
         JTextArea persoTextArea = new JTextArea(10, 20); // 10 lignes de hauteur et 20 colonnes de largeur
+        persoTextArea.setLineWrap(true);
+        persoTextArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(persoTextArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2; // Occupe 2 colonnes
@@ -387,43 +391,47 @@ public class MyFrame extends JFrame {
         BavardSendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
-                // Récup nom du bavard
-                String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                // On vérifie que le JTextField contenant le nom du bavard n'est pas vide ou déjà existant
+                if (!bavardSujetEnvoye.getText().isEmpty()) {
+                    // Récup nom du bavard
+                    String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
 
-                // Envoie du msg par le bavard courant au concierge
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom() == nomBavardCourant) {
-                        unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
-                        //System.out.println("msg envoyé au concierge");
-                    }
-                }
-
-                
-            // MAJ de la liste des sujets de l'onglet bavard
-                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
-                DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
-                for (Bavard unBavard : baraque.listBavards) {
-                    if (unBavard.getNom() == nomBavardCourant) {
-                        for (PapotageEvent potin : unBavard.listPapotages) {
-                            newBavardSubjectsModel.addElement(potin.sujet);
+                    // Envoie du msg par le bavard courant au concierge
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom() == nomBavardCourant) {
+                            unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
+                            //System.out.println("msg envoyé au concierge");
                         }
                     }
+
+                    
+                // MAJ de la liste des sujets de l'onglet bavard
+                    // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
+                    DefaultListModel<String> newBavardSubjectsModel = new DefaultListModel<>();
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom() == nomBavardCourant) {
+                            for (PapotageEvent potin : unBavard.listPapotages) {
+                                newBavardSubjectsModel.addElement(potin.sujet);
+                            }
+                        }
+                    }
+
+                    // Définir le nouveau DefaultListModel sur la JList
+                    bavardSubjectList.setModel(newBavardSubjectsModel);
+
+                // MAJ de la liste des sujets de l'onglet concierge
+                    // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
+                    DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
+                    for (PapotageEvent potin : baraque.concierge.listPapotages) {
+                        newConciergeSubjectsModel.addElement(potin.sujet);
+                    }
+                    
+                    // Définir le nouveau DefaultListModel sur la JList
+                    conciergeSubjectList.setModel(newConciergeSubjectsModel);
+                    //JOptionPane.showMessageDialog(null," créé avec succès");
+                } else {
+                    JOptionPane.showMessageDialog(null,"Le sujet du message ne peut pas être vide");
                 }
-
-                // Définir le nouveau DefaultListModel sur la JList
-                bavardSubjectList.setModel(newBavardSubjectsModel);
-
-            // MAJ de la liste des sujets de l'onglet concierge
-                // Créer un nouveau DefaultListModel avec la nouvelle liste des sujets
-                DefaultListModel<String> newConciergeSubjectsModel = new DefaultListModel<>();
-                for (PapotageEvent potin : baraque.concierge.listPapotages) {
-                    newConciergeSubjectsModel.addElement(potin.sujet);
-                }
-                   
-                // Définir le nouveau DefaultListModel sur la JList
-                conciergeSubjectList.setModel(newConciergeSubjectsModel);
-                //JOptionPane.showMessageDialog(null," créé avec succès");
-
             }
         });
         
@@ -518,6 +526,7 @@ public class MyFrame extends JFrame {
         connexion.add(new JLabel("Connecté : "), gbc);
     // Création et placement des JRadioButton pour choisir si on se connecte ou non
         JRadioButton connexionOuiButton = new JRadioButton("Oui");
+        connexionOuiButton.setSelected(true); // Sélectionner le JRadioButton "Oui" par défaut
         JRadioButton connexionNonButton = new JRadioButton("Non");
         ButtonGroup connexionGroup = new ButtonGroup();
         connexionGroup.add(connexionOuiButton);
