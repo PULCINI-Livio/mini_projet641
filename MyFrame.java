@@ -630,8 +630,9 @@ public class MyFrame extends JFrame {
                         bavardCourant.debloquer(nomBavardSelected);
                         System.out.println(nomBavardSelected + "est débloqué");
                     }
-                } else {
+                } else { // si aucun bavard n'est connecté, on repasse le switch à l'etat initial
                     JOptionPane.showMessageDialog(null, "Aucun bavard connecté");
+                    switchButton.setSelected(false);
                 }
             }
 
