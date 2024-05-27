@@ -15,7 +15,7 @@ public class MyFrame extends JFrame {
     protected JList<String> logConnexionList;
     protected JList<String> logDeconnexionList;
     protected JComboBox<String> bavardListeBavardsComboBox;
-    protected JToggleButton switchButton;
+    protected JToggleButton blockSwitchButton;
     // Constructeur
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
@@ -74,7 +74,7 @@ public class MyFrame extends JFrame {
         ImageIcon offIcon = new ImageIcon("switchUnblocked.png");
 
     // Créer le bouton switch
-        JToggleButton switchButton = new JToggleButton(offIcon);
+        JToggleButton blockSwitchButton = new JToggleButton(offIcon);
         
 //----------------------------------------------------------------------------------//
 //                                                                                 //
@@ -224,7 +224,7 @@ public class MyFrame extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
+        gbc.weightx = 3.0;
         gbc.gridwidth = 2; // Occupe 2 colonnes
         bavard.add(listeBavardsConnecteComboBox, gbc);
 
@@ -239,7 +239,7 @@ public class MyFrame extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
+        gbc.weightx = 3.0;
         gbc.gridwidth = 2; // Occupe 2 colonnes
         JTextField bavardSujetEnvoye = new JTextField(10);
         bavard.add(bavardSujetEnvoye, gbc);
@@ -367,11 +367,11 @@ public class MyFrame extends JFrame {
                     
                     if (bavardCourant.isBlocked(nomBavardSelected)) {
                         System.out.println("on passe en rouge");
-                        switchButton.setSelected(true);
+                        blockSwitchButton.setSelected(true);
                         System.out.println("on est passé en rouge");
                     } else {
                         System.out.println("on passe en vert");
-                        switchButton.setSelected(false);
+                        blockSwitchButton.setSelected(false);
                         System.out.println("on est passé en vert");
                     }
                 }
@@ -412,7 +412,7 @@ public class MyFrame extends JFrame {
         gbc.gridy = 4;
         gbc.gridwidth = 1; // Occupe 1 colonnes
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
+        gbc.weightx = 2.0;
         gbc.weighty = 1.0; // Ajoute du poids en hauteur
         JScrollPane bavardSscrollPane = new JScrollPane(bavardSubjectList);
         bavard.add(bavardSscrollPane, gbc);
@@ -534,16 +534,19 @@ public class MyFrame extends JFrame {
 
 
         // Créer le bouton switch
-        switchButton.setSelectedIcon(onIcon);
-        switchButton.setPreferredSize(new Dimension(80, 30)); // Définir la taille préférée du bouton
-        switchButton.setBorderPainted(false); // Masquer la bordure du bouton
-        switchButton.setFocusPainted(false); // Masquer la bordure de focus du bouton
+        blockSwitchButton.setSelectedIcon(onIcon);
+        blockSwitchButton.setPreferredSize(new Dimension(80, 30)); // Définir la taille préférée du bouton
+        blockSwitchButton.setBorderPainted(false); // Masquer la bordure du bouton
+        blockSwitchButton.setFocusPainted(false); // Masquer la bordure de focus du bouton
 
         // Placement JLabel("Gestionnaire des blocages: ")
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.CENTER;
         bavardPanelBlock.add(new JLabel("Gestionnaire des blocages : "), gbc); 
 
@@ -570,7 +573,7 @@ public class MyFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         gbc.weighty = 1; 
-        bavardPanelBlock.add(switchButton, gbc);
+        bavardPanelBlock.add(blockSwitchButton, gbc);
 
         // Placement du JPanel du blocking dans l'onglet bavard
         gbc.gridx = 4;
@@ -598,16 +601,16 @@ public class MyFrame extends JFrame {
                     String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
                     // on regarde si le bavard est bloqué par le bavard connecté et on met à jour le switch
                     if (bavardCourant.isBlocked(nomBavardSelected)) {
-                        switchButton.setSelected(true);
+                        blockSwitchButton.setSelected(true);
                     } else {
-                        switchButton.setSelected(false);
+                        blockSwitchButton.setSelected(false);
                     }
                 }
             }
         });
 
     // quand on clique sur le switch 
-        switchButton.addActionListener(new ActionListener() {
+        blockSwitchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 // Récup nom du bavard pour avoir le bavard connecté
@@ -623,7 +626,7 @@ public class MyFrame extends JFrame {
                     String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
 
                     // Détecter les changements d'état du bouton switch
-                    if (switchButton.isSelected()) {
+                    if (blockSwitchButton.isSelected()) {
                         bavardCourant.bloquer(nomBavardSelected);
                         System.out.println(nomBavardSelected + "est bloqué");
                     } else {
@@ -632,7 +635,7 @@ public class MyFrame extends JFrame {
                     }
                 } else { // si aucun bavard n'est connecté, on repasse le switch à l'etat initial
                     JOptionPane.showMessageDialog(null, "Aucun bavard connecté");
-                    switchButton.setSelected(false);
+                    blockSwitchButton.setSelected(false);
                 }
             }
 
@@ -924,7 +927,8 @@ public class MyFrame extends JFrame {
     
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(baraque.nom);
-        setSize(900, 500);
+        setSize(1000, 500);
+        //setResizable(false);
         setLocationRelativeTo(null);
     }
     
