@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class MyFrame extends JFrame {
     protected Batiment baraque;
-    protected JComboBox<String> listeBavardsComboBox;
+    protected JComboBox<String> connexionListeBavardsComboBox;
     protected JList<String> bavardSubjectList;
     protected JList<String> conciergeSubjectList;
     protected JComboBox<String> listeBavardsConnecteComboBox;
@@ -16,6 +16,11 @@ public class MyFrame extends JFrame {
     protected JList<String> logDeconnexionList;
     protected JComboBox<String> bavardListeBavardsComboBox;
     protected JToggleButton blockSwitchButton;
+
+    protected JToggleButton themeSwitchButton;
+    protected JComboBox<String> bavardListeThemeEnvoieComboBox;
+    protected JComboBox<String> bavardListeThemesABloquerComboBox;
+
     // Constructeur
     public MyFrame(Batiment uneBaraque) {
         this.baraque = uneBaraque;
@@ -44,11 +49,14 @@ public class MyFrame extends JFrame {
 
     // Init des listes dynamiques
         conciergeSubjectList = new JList<>();
-        listeBavardsComboBox = new JComboBox<>();
+        connexionListeBavardsComboBox = new JComboBox<>();
         bavardSubjectList = new JList<>();
         logConnexionList = new JList<>();
         logDeconnexionList = new JList<>();
         bavardListeBavardsComboBox = new JComboBox<>();
+        bavardListeThemeEnvoieComboBox = new JComboBox<>();
+        bavardListeThemesABloquerComboBox = new JComboBox<>();
+
     // Liste des bavards connectés dans onglet bavard
         ArrayList<String> listeBavardsConnecte = new ArrayList<>();
         for (Bavard unBavard : baraque.listBavards) {
@@ -69,13 +77,19 @@ public class MyFrame extends JFrame {
             conciergeSubjects.add(potin.sujet);
         }
 
+    // Liste avec tous les themes
+        ArrayList<String> themesListe = new ArrayList<>();
+        for (String unTheme : baraque.listThemes) {
+            themesListe.add(unTheme);
+        }
+
     // Charger les icônes pour les états enfoncé et relâché du bouton switch
         ImageIcon onIcon = new ImageIcon("switchBlocked.png");
         ImageIcon offIcon = new ImageIcon("switchUnblocked.png");
 
     // Créer le bouton switch
         JToggleButton blockSwitchButton = new JToggleButton(offIcon);
-        
+        JToggleButton themeSwitchButton = new JToggleButton(offIcon);
 //----------------------------------------------------------------------------------//
 //                                                                                 //
 //                                                                                  //
@@ -88,7 +102,7 @@ public class MyFrame extends JFrame {
 // Ajout composants pour onglet creation
         creation.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
+// Partie creation bavard
     // Placement JLabel("Nom du bavard")
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -136,18 +150,18 @@ public class MyFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         creation.add(creationRadioPanel, gbc);
 
-        // Placement du bouton de création
+        // Placement du bouton de création du bavard
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.WEST;
-        JButton creationBavardBtn = new JButton("Créer");
+        JButton creationBavardBtn = new JButton("Créer bavard");
         creation.add(creationBavardBtn, gbc);
 
 
 
-// Ajouter un écouteur d'événements au bouton de création des bavards
+    // Ajouter un écouteur d'événements au bouton de création des bavards
         creationBavardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
@@ -181,7 +195,7 @@ public class MyFrame extends JFrame {
                     // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des bavards 
                     DefaultComboBoxModel<String> nouveauListeBavardsComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeBavards.toArray(new String[0]));
                     // Définir le nouveau DefaultComboBoxModel sur la JComboBox
-                    listeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
+                    connexionListeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
                     bavardListeBavardsComboBox.setModel(nouveauListeBavardsComboBoxModel);
                 } else {
                     if (creationNomBavard.getText().isEmpty()) {
@@ -193,8 +207,73 @@ public class MyFrame extends JFrame {
                 }
             }
         });
-        
 
+// Partie creation theme
+    // Placement JLabel("Nom du thème")
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.anchor = GridBagConstraints.EAST;
+    creation.add(new JLabel("Nom du thème : "), gbc);
+
+    // Placement JTextField pour entrer le nom du theme à créer
+    gbc.gridx = 1;
+    gbc.gridy = 4;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 1.0;
+    JTextField creationNomTheme = new JTextField(10);
+    creation.add(creationNomTheme, gbc);
+
+    // Placement du bouton de création du theme
+    gbc.gridx = 1;
+    gbc.gridy = 5;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = 0.0;
+    gbc.anchor = GridBagConstraints.WEST;
+    JButton creationThemeBtn = new JButton("Créer thème");
+    creation.add(creationThemeBtn, gbc);
+
+    // Ajouter un écouteur d'événements au bouton de création des themes
+    creationThemeBtn.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent arg0) {
+            // Récup nom du theme du JTextField
+            String nomTheme = creationNomTheme.getText(); 
+            // On verifie que le nom du theme n'est pas deja pris
+            boolean existeDeja = false;
+            for (String unTheme : baraque.listThemes) {
+                if (unTheme.equals(nomTheme))
+                existeDeja = true;
+            }
+            // On vérifie que le JTextField contenant le nom du bavard n'est pas vide ou déjà existant
+            if (!creationNomTheme.getText().isEmpty() && !existeDeja) {
+                
+        // MAJ des entités liés à la création d'un theme
+            // Création et ajout du theme dans la liste de theme du batiment
+                baraque.addTheme(nomTheme);
+                JOptionPane.showMessageDialog(null, "Le thème " + nomTheme + " a été créé avec succès");
+
+            // MAJ dans les JComboBox contenant la liste de tous les themes de l'onglet bavard
+                // Créer une nouvelle liste des themes à partir de ceux du batiment
+                ArrayList<String> nouvelleListeThemes = new ArrayList<>();
+                for (String unTheme : baraque.listThemes) {
+                    nouvelleListeThemes.add(unTheme);
+                }
+                // Créer un nouveau DefaultComboBoxModel avec la nouvelle liste des themes 
+                DefaultComboBoxModel<String> nouveauListeThemesComboBoxModel = new DefaultComboBoxModel<>(nouvelleListeThemes.toArray(new String[0]));
+                // Définir le nouveau DefaultComboBoxModel sur les JComboBox
+                bavardListeThemeEnvoieComboBox.setModel(nouveauListeThemesComboBoxModel);
+                bavardListeThemesABloquerComboBox.setModel(nouveauListeThemesComboBoxModel);
+
+            } else {
+                if (creationNomTheme.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null,"Le nom du theme ne peut pas être vide");
+                }
+                if (existeDeja) {
+                    JOptionPane.showMessageDialog(null,"Le nom du theme est déjà pris");
+                }
+            }
+        }
+    });
 //----------------------------------------------------------------------------------//
 //                                                                                  //
 //                                                                                  //
@@ -245,12 +324,34 @@ public class MyFrame extends JFrame {
         bavard.add(bavardSujetEnvoye, gbc);
 
     // Création du JPanel qui contient le JLabel("Contenu : ") et le bouton pour envoyer le message
+    // Contient également la combobox des themes et le JLabel("Thème : ")
         JPanel bavardContenuEnvoiPanel = new JPanel();
-        bavardContenuEnvoiPanel.setLayout(new GridLayout(2,1));
-        
-        bavardContenuEnvoiPanel.add(new JLabel("Contenu : "));
+        bavardContenuEnvoiPanel.setLayout(new GridBagLayout());
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        bavardContenuEnvoiPanel.add(new JLabel("Thème : "), gbc);
+
+
+    // Ajout JCombobox contenant la liste des themes dans l'onglet bavard
+        //Créer un DefaultComboBoxModel avec la liste des themes initié dans // INITIALISATION //
+        DefaultComboBoxModel<String> bavardListeThemeEnvoieComboBoxModel = new DefaultComboBoxModel<>(themesListe.toArray(new String[0]));
+        // Créer la JComboBox avec le DefaultComboBoxModel
+        bavardListeThemeEnvoieComboBox.setModel(bavardListeThemeEnvoieComboBoxModel);
+        // Placement de la JCombobox
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        bavardContenuEnvoiPanel.add(bavardListeThemeEnvoieComboBox, gbc);
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        bavardContenuEnvoiPanel.add(new JLabel("Contenu : "), gbc);
+
         JButton BavardSendBtn = new JButton("Envoyer");
-        bavardContenuEnvoiPanel.add(BavardSendBtn);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        bavardContenuEnvoiPanel.add(BavardSendBtn, gbc);
         // Placement du JPanel
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -362,16 +463,33 @@ public class MyFrame extends JFrame {
                 // partie blocage
                     String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
                     System.out.println(bavardCourant.getNom()+" a t il bloqué "+nomBavardSelected+"? ");
-                    System.out.println(bavardCourant.isBlocked(nomBavardSelected));
+                    System.out.println(bavardCourant.isBavardBlocked(nomBavardSelected));
                     // on regarde si le bavard dans la comboBox des bloqués est bloqué par le bavard connecté et on met à jour le switch
                     
-                    if (bavardCourant.isBlocked(nomBavardSelected)) {
+                    if (bavardCourant.isBavardBlocked(nomBavardSelected)) {
                         System.out.println("on passe en rouge");
                         blockSwitchButton.setSelected(true);
                         System.out.println("on est passé en rouge");
                     } else {
                         System.out.println("on passe en vert");
                         blockSwitchButton.setSelected(false);
+                        System.out.println("on est passé en vert");
+                    }
+
+                // partie gestion themes
+                    // on regarde si le theme dans la comboBox des themes à gerer est bloqué par le bavard connecté et on met à jour le switch
+                    String nomThemeSelected = (String) bavardListeThemesABloquerComboBox.getSelectedItem();
+                    System.out.println(bavardCourant.getNom()+" a t il bloqué le theme "+nomThemeSelected+"? ");
+                    System.out.println(bavardCourant.isThemeBlocked(nomThemeSelected));
+                    // on regarde si le bavard dans la comboBox des bloqués est bloqué par le bavard connecté et on met à jour le switch
+                    
+                    if (bavardCourant.isThemeBlocked(nomThemeSelected)) {
+                        System.out.println("on passe en rouge");
+                        themeSwitchButton.setSelected(true);
+                        System.out.println("on est passé en rouge");
+                    } else {
+                        System.out.println("on passe en vert");
+                        themeSwitchButton.setSelected(false);
                         System.out.println("on est passé en vert");
                     }
                 }
@@ -431,7 +549,7 @@ public class MyFrame extends JFrame {
                     // Envoie du msg par le bavard courant au concierge
                     for (Bavard unBavard : baraque.listBavards) {
                         if (unBavard.getNom() == nomBavardCourant) {
-                            unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText() );
+                            unBavard.sendPotin(bavardSujetEnvoye.getText(),persoTextArea.getText(), (String) bavardListeThemeEnvoieComboBox.getSelectedItem());
                             //System.out.println("msg envoyé au concierge");
                         }
                     }
@@ -554,7 +672,7 @@ public class MyFrame extends JFrame {
         //Créer un DefaultComboBoxModel avec la liste des bavards connectés
         DefaultComboBoxModel<String> bavardListeBavardsComboBoxModel = new DefaultComboBoxModel<>(bavardsListe.toArray(new String[0]));
         // Créer la JComboBox avec le DefaultComboBoxModel
-        bavardListeBavardsComboBox = new JComboBox<>();
+        //bavardListeBavardsComboBox = new JComboBox<>();
         bavardListeBavardsComboBox.setModel(bavardListeBavardsComboBoxModel);
 
         gbc.gridx = 0;
@@ -600,7 +718,7 @@ public class MyFrame extends JFrame {
                     }
                     String nomBavardSelected = (String) bavardListeBavardsComboBox.getSelectedItem();
                     // on regarde si le bavard est bloqué par le bavard connecté et on met à jour le switch
-                    if (bavardCourant.isBlocked(nomBavardSelected)) {
+                    if (bavardCourant.isBavardBlocked(nomBavardSelected)) {
                         blockSwitchButton.setSelected(true);
                     } else {
                         blockSwitchButton.setSelected(false);
@@ -627,15 +745,127 @@ public class MyFrame extends JFrame {
 
                     // Détecter les changements d'état du bouton switch
                     if (blockSwitchButton.isSelected()) {
-                        bavardCourant.bloquer(nomBavardSelected);
+                        bavardCourant.bloquerBavard(nomBavardSelected);
                         System.out.println(nomBavardSelected + "est bloqué");
                     } else {
-                        bavardCourant.debloquer(nomBavardSelected);
+                        bavardCourant.debloquerBavard(nomBavardSelected);
                         System.out.println(nomBavardSelected + "est débloqué");
                     }
                 } else { // si aucun bavard n'est connecté, on repasse le switch à l'etat initial
                     JOptionPane.showMessageDialog(null, "Aucun bavard connecté");
                     blockSwitchButton.setSelected(false);
+                }
+            }
+        });
+
+
+// Partie gestion des themes
+        JPanel bavardPanelTheme = new JPanel(new GridBagLayout());
+
+
+        // Créer le bouton switch
+        themeSwitchButton.setSelectedIcon(onIcon);
+        themeSwitchButton.setPreferredSize(new Dimension(80, 30)); // Définir la taille préférée du bouton
+        themeSwitchButton.setBorderPainted(false); // Masquer la bordure du bouton
+        themeSwitchButton.setFocusPainted(false); // Masquer la bordure de focus du bouton
+
+        // Placement JLabel("Gestionnaire des themes: ")
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonnes
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.CENTER;
+        bavardPanelTheme.add(new JLabel("Gestionnaire des thèmes : "), gbc); 
+
+
+        //Créer un DefaultComboBoxModel avec la liste des themes
+        DefaultComboBoxModel<String> bavardListeThemesComboBoxModel = new DefaultComboBoxModel<>(themesListe.toArray(new String[0]));
+        // Créer la JComboBox avec le DefaultComboBoxModel
+        //bavardListeBavardsComboBox = new JComboBox<>();
+        bavardListeThemesABloquerComboBox.setModel(bavardListeThemesComboBoxModel);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavardPanelTheme.add(bavardListeThemesABloquerComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 1; // Occupe 1 ligne
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavardPanelTheme.add(themeSwitchButton, gbc);
+
+        // Placement du JPanel gestion des themes dans l'onglet bavard
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Occupe 1 colonne
+        gbc.gridheight = 4; // Occupe 4 lignes
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 1;
+        gbc.weighty = 1; 
+        bavard.add(bavardPanelTheme, gbc);
+
+        // Quand on change de theme à gérer (bloquer/debloquer) avec la combobox
+        bavardListeThemesABloquerComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (listeBavardsConnecteComboBox.getItemCount() != 0){ // si la combobox n'est pas vide
+                    // Récup nom du bavard pour avoir le bavard connecté
+                    String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                    Bavard bavardCourant = null;
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(nomBavardCourant)) {
+                            bavardCourant = unBavard;
+                        }
+                    }
+                    String nomThemeSelected = (String) bavardListeThemesABloquerComboBox.getSelectedItem();
+                    // on regarde si le theme est bloqué par le bavard connecté et on met à jour le switch
+                    if (bavardCourant.isThemeBlocked(nomThemeSelected)) {
+                        themeSwitchButton.setSelected(true);
+                    } else {
+                        themeSwitchButton.setSelected(false);
+                    }
+                }
+            }
+        });
+
+    // quand on clique sur le switch du theme pour le bloquer/debloquer
+        themeSwitchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                // Récup nom du bavard pour avoir le bavard connecté
+                if (listeBavardsConnecteComboBox.getItemCount() != 0){    
+                    String nomBavardCourant = (String) listeBavardsConnecteComboBox.getSelectedItem();
+                    Bavard bavardCourant = null;
+                    for (Bavard unBavard : baraque.listBavards) {
+                        if (unBavard.getNom().equals(nomBavardCourant)) {
+                            bavardCourant = unBavard;
+                        }
+                    }
+
+                    String nomThemeSelected = (String) bavardListeThemesABloquerComboBox.getSelectedItem();
+
+                    // Détecter les changements d'état du bouton switch
+                    if (themeSwitchButton.isSelected()) {
+                        bavardCourant.bloquerTheme(nomThemeSelected);
+                        System.out.println("Le thème " + nomThemeSelected + "est bloqué");
+                    } else {
+                        bavardCourant.debloquerTheme(nomThemeSelected);
+                        System.out.println("Le thème " + nomThemeSelected + "est débloqué");
+                    }
+                } else { // si aucun bavard n'est connecté, on repasse le switch à l'etat initial
+                    JOptionPane.showMessageDialog(null, "Aucun bavard connecté");
+                    themeSwitchButton.setSelected(false);
                 }
             }
 
@@ -665,8 +895,8 @@ public class MyFrame extends JFrame {
         //Créer un DefaultComboBoxModel avec la liste des bavards connectés
         DefaultComboBoxModel<String> listeBavardsComboBoxModel = new DefaultComboBoxModel<>(bavardsListe.toArray(new String[0]));
         // Créer la JComboBox avec le DefaultComboBoxModel
-        listeBavardsComboBox = new JComboBox<>();
-        listeBavardsComboBox.setModel(listeBavardsComboBoxModel);
+        connexionListeBavardsComboBox = new JComboBox<>();
+        connexionListeBavardsComboBox.setModel(listeBavardsComboBoxModel);
     // Placement de la combobox qui contient la liste complète des bavards
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -674,7 +904,7 @@ public class MyFrame extends JFrame {
         gbc.weightx = 3.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.EAST;
-        connexion.add(listeBavardsComboBox, gbc);
+        connexion.add(connexionListeBavardsComboBox, gbc);
 
     // Placement JLabel("Connecté : ")
         gbc.gridx = 0;
@@ -752,7 +982,7 @@ public class MyFrame extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent arg0) {
             // Récup nom du bavard
-                String nomBavardAConnecter = (String) listeBavardsComboBox.getSelectedItem(); 
+                String nomBavardAConnecter = (String) connexionListeBavardsComboBox.getSelectedItem(); 
                 
             // Récup choix connexion/deconnexion du bavard
                 boolean connexionChoisi = true;
@@ -828,6 +1058,7 @@ public class MyFrame extends JFrame {
 
                 // Définir le nouveau DefaultListModel sur la JList
                 logDeconnexionList.setModel(newLogDeconnexionListModel);
+
             }   
         });
         
