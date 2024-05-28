@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBavardListener{
+public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBavardListener {
+// Attributs
     protected String nom;
     protected Batiment batiment;
     protected boolean interet;
@@ -9,8 +10,10 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
     protected List<PapotageEvent> listPapotages; 
     protected List<OnLineBavardEvent> listOnLine;
     protected List<OffLineBavardEvent> listOffLine;
+    protected List<Bavard> listBavardBlocked;
+    protected List<String> listThemeBlocked;
 
-    // Constructeurs
+// Constructeurs
     public Bavard(String nom, Batiment unBatiment) {
         this.nom = nom;
         this.batiment = unBatiment;
@@ -19,6 +22,8 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         this.listPapotages = new ArrayList<>();
         this.listOnLine = new ArrayList<>();
         this.listOffLine = new ArrayList<>();
+        this.listBavardBlocked = new ArrayList<>();
+        this.listThemeBlocked = new ArrayList<>();
     }
 
     public Bavard(String nom, Batiment unBatiment, boolean unInteret) {
@@ -29,6 +34,8 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         this.listPapotages = new ArrayList<>();
         this.listOnLine = new ArrayList<>();
         this.listOffLine = new ArrayList<>();
+        this.listBavardBlocked = new ArrayList<>();
+        this.listThemeBlocked = new ArrayList<>();
     }
 
     public Bavard(String nom, Batiment unBatiment, boolean unInteret, boolean estConnecte) {
@@ -39,10 +46,13 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         this.listPapotages = new ArrayList<>();
         this.listOnLine = new ArrayList<>();
         this.listOffLine = new ArrayList<>();
+        this.listBavardBlocked = new ArrayList<>();
+        this.listThemeBlocked = new ArrayList<>();
         }
 
-    public void sendPotin(String unSujet, String unCorps) {
-        PapotageEvent potin = new PapotageEvent(this, unSujet, unCorps, this);
+// Méthodes pour générer des Events
+    public void sendPotin(String unSujet, String unCorps, String unTheme) {
+        PapotageEvent potin = new PapotageEvent(this, unSujet, unCorps, this, unTheme);
         batiment.concierge.papotageEventReceived(potin);
     }
 
@@ -58,7 +68,7 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
 
     public void signalDeconnexion() {
         OffLineBavardEvent event = new OffLineBavardEvent(this, this);
-        System.out.println("Déonnexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
+        System.out.println("Déconnexion de "+event.envoyeur.getNom()+" à "+event.getCurrentTime() );
         for (Bavard unePersonne : batiment.listBavards) {
             if (unePersonne.getNom() != this.getNom() && unePersonne.isConnecte()) {
                 unePersonne.OffLineBavardEventReceived(event);
@@ -66,10 +76,11 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         }
     }
 
+// Methode quand on recois des Event
     @Override
     public void papotageEventReceived(PapotageEvent event) {
         System.out.println(nom + " a reçu un message : " + event.corps);
-        if (interet) {
+        if (interet && !this.isBavardBlocked(event.envoyeur.getNom()) && !this.isThemeBlocked(event.getTheme())) {
             listPapotages.add(event);
         }
     }
@@ -87,7 +98,7 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
         System.out.println(this.getNom()+" a vu la déconnexion de "+ event.envoyeur.getNom());
 
     }
-    
+// Getters and setters
     public String getNom() {
         return nom;
     }
@@ -118,5 +129,58 @@ public class Bavard implements PapotageListener, OnLineBavardListener, OffLineBa
             System.out.println(event.sujet);
         }
         System.out.println("voila tous les papotages");
+    }
+
+// Methodes pour gerer le blocage des bavards
+    public boolean isBavardBlocked(String nomBavard) {
+        boolean res = false;
+        for (Bavard unBavardBlocked : listBavardBlocked) {
+            if (unBavardBlocked.getNom().equals(nomBavard)) {
+                res = true;
+            }
+        }
+        return res;
+    }
+
+    public void bloquerBavard(String nomBavard) {
+        for (Bavard unBavard : batiment.listBavards) {
+            if (unBavard.getNom().equals(nomBavard)) {
+                listBavardBlocked.add(unBavard);
+            }
+        }
+    }
+
+    public void bloquerBavard(Bavard unBavard) {
+        listBavardBlocked.add(unBavard);
+    }
+
+    public void debloquerBavard(Bavard unBavard) {
+        listBavardBlocked.remove(unBavard);
+    }
+
+    public void debloquerBavard(String nomBavard) {
+        for (Bavard unBavard : batiment.listBavards) {
+            if (unBavard.getNom().equals(nomBavard)) {
+                listBavardBlocked.remove(unBavard);
+            }
+        }
+    }
+// Methodes pour gerer le blocage des themes
+    public boolean isThemeBlocked(String nomTheme) {
+        boolean res = false;
+        for (String unTheme : listThemeBlocked) {
+            if (unTheme.equals(nomTheme)) {
+                res = true;
+            }
+        }
+        return res;
+    }
+
+    public void bloquerTheme(String nomTheme) {
+        listThemeBlocked.add(nomTheme);
+    }
+
+    public void debloquerTheme(String nomTheme) {
+        listThemeBlocked.remove(nomTheme);
     }
 }
